@@ -6,6 +6,9 @@ const footerLinks = [
   { label: "Contact", href: "#" },
 ];
 
+
+const emailContact = process.env.NEXT_EMAIL_CONTACT
+
 function ShareIcon() {
   return (
     <svg
@@ -84,13 +87,13 @@ export function Footer() {
         >
           <ShareIcon />
         </button>
-        <button
+        <a href={`mailto:${emailContact}`}
           type="button"
           aria-label="Email"
           className="transition-colors hover:text-secondary"
         >
           <MailIcon />
-        </button>
+        </a>
       </div>
     </footer>
   );
