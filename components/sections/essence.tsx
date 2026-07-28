@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import { Reveal } from "@/components/ui/reveal";
+import venueOverview from "@/public/images/venue-overview.jpg";
 
 export function Essence() {
   return (
@@ -10,9 +11,10 @@ export function Essence() {
     >
       <Reveal className="relative aspect-4/5 w-full overflow-hidden">
         <Image
-          src="/images/venue-overview.jpg"
+          src={venueOverview}
           alt="Beyond Norms venue set up with long candlelit tables and a red stage curtain"
           fill
+          placeholder="blur"
           className="object-cover"
           sizes="(min-width: 1024px) 50vw, 100vw"
         />

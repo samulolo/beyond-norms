@@ -1,11 +1,15 @@
 import Image from "next/image";
+import type { StaticImageData } from "next/image";
 
 import { Reveal } from "@/components/ui/reveal";
+import hostSpeaking from "@/public/images/host-speaking.jpg";
+import soulSpeedDating from "@/public/images/soul-speed-dating.jpg";
+import tableDecor from "@/public/images/table-decor.jpg";
 
 type Pillar = {
   title: string;
   description: string;
-  image: string;
+  image: StaticImageData;
   alt: string;
   accent: "secondary" | "sage" | "terracotta";
 };
@@ -21,7 +25,7 @@ const pillars: Pillar[] = [
     title: "Luxury Experiences",
     description:
       "An elegant and immersive atmosphere designed for sophistication and comfort, from the first toast to the final note.",
-    image: "/images/table-decor.jpg",
+    image: tableDecor,
     alt: "Candlelit table with white flowers and champagne glasses",
     accent: "secondary",
   },
@@ -29,7 +33,7 @@ const pillars: Pillar[] = [
     title: "Authentic Connections",
     description:
       "Meaningful exchanges beyond appearances — conversations built on vulnerability, energy, and emotional intelligence.",
-    image: "/images/soul-speed-dating.jpg",
+    image: soulSpeedDating,
     alt: "Guests connecting over Soul Speed Dating on a rooftop at sunset",
     accent: "sage",
   },
@@ -37,7 +41,7 @@ const pillars: Pillar[] = [
     title: "Lasting Memories",
     description:
       "Curated moments crafted to be felt, not forgotten — the start of stories that continue long after the night ends.",
-    image: "/images/host-speaking.jpg",
+    image: hostSpeaking,
     alt: "Host speaking to guests on stage",
     accent: "terracotta",
   },
@@ -65,6 +69,7 @@ export function Pillars() {
                 src={pillar.image}
                 alt={pillar.alt}
                 fill
+                placeholder="blur"
                 className="object-cover"
                 sizes="(min-width: 1024px) 33vw, 100vw"
               />

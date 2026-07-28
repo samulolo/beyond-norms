@@ -1,15 +1,17 @@
 import Image from "next/image";
 
 import { Reveal } from "@/components/ui/reveal";
+import dinnerShowPerformance from "@/public/images/dinner-show-performance.jpg";
 
 export function Harmony() {
   return (
     <section className="grid gap-12 bg-primary/5 px-8 py-24 lg:grid-cols-2 lg:items-center lg:gap-20 lg:px-16">
       <Reveal className="relative aspect-4/5 w-full overflow-hidden">
         <Image
-          src="/images/dinner-show-performance.jpg"
+          src={dinnerShowPerformance}
           alt="Live saxophonist and painter performing on stage during the Dinner Show"
           fill
+          placeholder="blur"
           className="object-cover"
           sizes="(min-width: 1024px) 50vw, 100vw"
         />

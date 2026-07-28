@@ -3,6 +3,8 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
 import { eventYear } from "@/utils/constant/const";
+import tableDecor from "@/public/images/table-decor.jpg";
+import venueOverview from "@/public/images/venue-overview.jpg";
 
 function CalendarIcon() {
   return (
@@ -45,10 +47,11 @@ export function Hero() {
     <section className="grid gap-16 bg-tertiary px-8 py-16 lg:grid-cols-2 lg:items-center lg:gap-16 lg:px-16 lg:py-20">
       <Reveal className="relative h-[420px] w-full lg:h-[640px]">
         <Image
-          src="/images/venue-overview.jpg"
+          src={venueOverview}
           alt="BeyondNorms venue set up with long candlelit tables and a red stage curtain"
           fill
           priority
+          placeholder="blur"
           className="object-cover"
           sizes="(min-width: 1024px) 50vw, 100vw"
         />
@@ -56,9 +59,10 @@ export function Hero() {
         <div className="absolute -bottom-8 -right-4 hidden w-48 flex-col gap-3 border border-primary/10 bg-tertiary p-3 shadow-xl sm:flex">
           <div className="relative aspect-square w-full overflow-hidden">
             <Image
-              src="/images/table-decor.jpg"
+              src={tableDecor}
               alt="Candlelit table decor at the venue"
               fill
+              placeholder="blur"
               className="object-cover"
               sizes="192px"
             />

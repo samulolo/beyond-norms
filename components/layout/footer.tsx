@@ -66,6 +66,18 @@ export function Footer() {
 
       <div className="flex items-center gap-4 text-primary">
         <button
+        onClick={ async () => {
+
+          try {
+            await navigator.share({
+              title: "BeyondNorms",
+              text: "Checkout this incredible event",
+              url: process.env.NEXT_PUBLIC_SITE_URL
+            })
+          } catch {
+            console.log("Houve um erro ao partilhar dados")
+          }
+        }}
           type="button"
           aria-label="Share"
           className="transition-colors hover:text-secondary"

@@ -1,3 +1,5 @@
+'use client'
+
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { Essence } from "@/components/sections/essence";
