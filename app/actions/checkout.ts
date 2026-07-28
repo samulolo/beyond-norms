@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { getStripeClient } from "@/utils/stripe";
 
-const TICKET_PRICE_EUR = 84;
+const TICKET_PRICE_EUR = 85;
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 export async function createCheckoutSession() {

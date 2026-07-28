@@ -40,7 +40,7 @@ export function Pricing() {
         </div>
 
         <p className="flex items-baseline gap-1 font-serif text-4xl text-primary">
-          &euro;84
+          &euro;85
           <span className="font-sans text-sm text-neutral">/ Individual</span>
         </p>
 
@@ -57,7 +57,11 @@ export function Pricing() {
         </ul>
 
         <form action={createCheckoutSession}>
-          <Button type="submit" className="w-full">
+          <Button
+            type="submit"
+            className="w-full"
+            loadingText="Redirecting to checkout…"
+          >
             Reserve Experience
           </Button>
         </form>

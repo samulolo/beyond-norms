@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { useFormStatus } from "react-dom";
 
 type ButtonVariant = "primary" | "outline";
 type ButtonSize = "sm" | "md";
@@ -24,11 +27,17 @@ type ButtonProps = {
   onClick?: () => void;
   type?: "button" | "submit";
   icon?: boolean;
+  loadingText?: string;
 };
 
 const iconWrapperClasses: Record<ButtonVariant, string> = {
   primary: "bg-tertiary text-primary",
   outline: "bg-primary text-tertiary",
+};
+
+const spinnerClasses: Record<ButtonVariant, string> = {
+  primary: "border-tertiary/30 border-t-tertiary",
+  outline: "border-primary/30 border-t-primary",
 };
 
 function ButtonIcon({ variant }: { variant: ButtonVariant }) {
@@ -50,6 +59,15 @@ function ButtonIcon({ variant }: { variant: ButtonVariant }) {
   );
 }
 
+function ButtonSpinner({ variant }: { variant: ButtonVariant }) {
+  return (
+    <span
+      className={`mr-3 size-4 shrink-0 animate-spin rounded-full border-2 ${spinnerClasses[variant]}`}
+      aria-hidden
+    />
+  );
+}
+
 export function Button({
   children,
   variant = "primary",
@@ -59,18 +77,27 @@ export function Button({
   onClick,
   type = "button",
   icon = false,
+  loadingText,
 }: ButtonProps) {
+  // Quando este botão está dentro de um <form action={...}> (Server Action),
+  // useFormStatus reflete o estado desse submit. Fora de um form, "pending"
+  // fica sempre false, por isso é seguro chamar isto sempre.
+  const { pending } = useFormStatus();
+  const isPending = type === "submit" && pending;
+
   const classes = [
     "inline-flex items-center justify-center whitespace-nowrap font-sans font-medium uppercase tracking-wider transition-colors",
     variantClasses[variant],
     sizeClasses[size],
+    isPending ? "cursor-not-allowed opacity-70" : "",
     className,
   ].join(" ");
 
   const content = (
     <>
-      {children}
-      {icon && <ButtonIcon variant={variant} />}
+      {isPending && <ButtonSpinner variant={variant} />}
+      {isPending ? (loadingText ?? children) : children}
+      {icon && !isPending && <ButtonIcon variant={variant} />}
     </>
   );
 
@@ -83,7 +110,12 @@ export function Button({
   }
 
   return (
-    <button type={type} onClick={onClick} className={classes}>
+    <button
+      type={type}
+      onClick={onClick}
+      disabled={isPending}
+      className={classes}
+    >
       {content}
     </button>
   );

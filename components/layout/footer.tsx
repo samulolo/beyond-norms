@@ -7,7 +7,7 @@ const footerLinks = [
 ];
 
 
-const emailContact = process.env.NEXT_EMAIL_CONTACT
+const emailContact = process.env.NEXT_PUBLIC_EMAIL_CONTACT
 
 function ShareIcon() {
   return (
@@ -55,7 +55,7 @@ export function Footer() {
         </span>
       </div>
 
-      <nav className="flex items-center gap-8">
+      {/* <nav className="flex items-center gap-8">
         {footerLinks.map((link) => (
           <Link
             key={link.label}
@@ -65,7 +65,7 @@ export function Footer() {
             {link.label}
           </Link>
         ))}
-      </nav>
+      </nav> */}
 
       <div className="flex items-center gap-4 text-primary">
         <button

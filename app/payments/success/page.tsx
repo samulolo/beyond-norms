@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 
 import { getStripeClient } from "@/utils/stripe";
@@ -12,6 +13,7 @@ async function getCustomerEmail(sessionId: string | undefined) {
   try {
     const stripe = getStripeClient();
     const session = await stripe.checkout.sessions.retrieve(sessionId);
+
     return session.customer_details?.email ?? null;
   } catch {
     return null;
@@ -23,6 +25,11 @@ export default async function PaymentSuccessPage({
 }: PageProps) {
   const { session_id } = await searchParams;
   const email = await getCustomerEmail(session_id);
+
+  // O email de confirmação é enviado pelo webhook da Stripe
+  // (app/api/stripe/webhook/route.ts), com idempotência garantida pela
+  // tabela `payments` no Supabase. Esta página é só apresentação — pode
+  // ser recarregada/revisitada sem disparar novos envios.
 
   return (
     <section className="flex flex-1 flex-col items-center justify-center gap-6 bg-tertiary px-8 py-24 text-center lg:px-16">
@@ -44,7 +51,7 @@ export default async function PaymentSuccessPage({
         ) : (
           "We've saved your spot."
         )}{" "}
-        You&apos;re officially part of BeyondNorms &mdash; get ready for real
+        You&apos;re officially part of <span className="text-secondary font-serif">BeyondNorms</span> &mdash; get ready for real
         people, real emotions, and real connections. Keep an eye on your inbox,
         we&apos;ll be in touch with everything you need before the night.
       </p>
