@@ -2,7 +2,7 @@ import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
-import { eventYear } from "@/utils/constant/const";
+import { eventDates, eventYear } from "@/utils/constant/const";
 import tableDecor from "@/public/images/table-decor.jpg";
 import venueOverview from "@/public/images/hero-dinner.jpg";
 
@@ -86,7 +86,8 @@ export function Hero() {
             <CalendarIcon />
           </span>
           <p className="font-sans text-sm font-semibold uppercase tracking-widest text-secondary">
-            Lisbon &middot; {eventYear}
+            Lisbon &middot; {eventDates.map((date) => date.label).join(" & ")}
+            , {eventYear}
           </p>
         </Reveal>
 
@@ -102,10 +103,11 @@ export function Hero() {
 
         <Reveal delay={200}>
           <p className="max-w-md font-sans text-lg leading-relaxed text-neutral">
-            Two unique experiences, one unforgettable evening &mdash; real
-            people, real emotions, real connections.
+            Two unique experiences, one unforgettable evening.
+            Real people, real emotions, real connections.
           </p>
         </Reveal>
+
 
         <Reveal delay={300}>
           <div className="mt-2 flex flex-wrap gap-4">

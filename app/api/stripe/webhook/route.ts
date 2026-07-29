@@ -4,6 +4,7 @@ import type Stripe from "stripe";
 import { getStripeClient } from "@/utils/stripe";
 import { createClient } from "@/supabase/server";
 import { sendEmailConfirmation } from "@/email/resend";
+import { eventDates } from "@/utils/constant/const";
 
 export async function POST(request: Request) {
   // Nota (Agente 1): supabase/server.ts passou a expor `createClient()`
@@ -45,15 +46,58 @@ export async function POST(request: Request) {
     );
   }
 
-  if (event.type !== "checkout.session.completed") {
+  // "checkout.session.completed" cobre métodos síncronos (cartão) — já
+  // vem com payment_status "paid". Métodos assíncronos (ex: MB WAY,
+  // Multibanco, transferência) também disparam este evento, mas ainda
+  // "unpaid" nessa altura; só ficam "paid" mais tarde, via
+  // "checkout.session.async_payment_succeeded". Por isso ouvimos os
+  // dois e confirmamos sempre payment_status antes de processar.
+  const relevantEventTypes = [
+    "checkout.session.completed",
+    "checkout.session.async_payment_succeeded",
+  ];
+
+  if (!relevantEventTypes.includes(event.type)) {
     return NextResponse.json({ received: true });
   }
 
   const session = event.data.object as Stripe.Checkout.Session;
+
+  if (session.payment_status !== "paid") {
+    console.log(
+      "Sessão ainda não paga (método assíncrono a aguardar confirmação), a ignorar por agora: ",
+      session.id,
+      session.payment_status,
+    );
+    return NextResponse.json({ received: true, skipped: true });
+  }
+
   const email = session.customer_details?.email;
-  const customerName = session.custom_fields?.find(
-    (field) => field.key === "full_name",
-  )?.text?.value ?? undefined;
+  // Nome e telefone vêm do nosso formulário em /checkout (via metadata),
+  // não dos custom_fields da Stripe — a Stripe só trata do pagamento.
+  const customerName = session.metadata?.customer_name || undefined;
+  const customerPhone = session.metadata?.customer_phone || undefined;
+
+  let dietaryRestrictions: string[] = [];
+  try {
+    dietaryRestrictions = JSON.parse(
+      session.metadata?.dietary_restrictions ?? "[]",
+    );
+  } catch {
+    dietaryRestrictions = [];
+  }
+
+  const dietaryOther = session.metadata?.dietary_other || null;
+  const hasAllergies = session.metadata?.has_allergies === "true";
+  const allergyDetails = session.metadata?.allergy_details || null;
+
+  const eventDateId = session.metadata?.event_date || null;
+  const matchedEventDate = eventDates.find((date) => date.id === eventDateId);
+  // "full" vem como "August 20, 2026" — separamos em duas partes porque é
+  // assim que o EmailTemplate espera (props eventDate / eventYear).
+  const [eventDateLabel, eventYearLabel] = matchedEventDate
+    ? matchedEventDate.full.split(", ")
+    : [undefined, undefined];
 
   if (!email) {
     console.log("Sessão sem email de cliente, a ignorar: ", session.id);
@@ -71,7 +115,13 @@ export async function POST(request: Request) {
           customer_email: email,
           status: session.payment_status ?? "completed",
           email_sent: false,
-          customer_name: customerName
+          customer_name: customerName,
+          customer_phone: customerPhone,
+          event_date_id: eventDateId,
+          dietary_restrictions: dietaryRestrictions,
+          dietary_other: dietaryOther,
+          has_allergies: hasAllergies,
+          allergy_details: allergyDetails,
         },
         { onConflict: "stripe_payment_id", ignoreDuplicates: true },
       )
@@ -105,7 +155,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ received: true, skipped: true });
     }
 
-    await sendEmailConfirmation(email, customerName);
+    await sendEmailConfirmation(
+      email,
+      customerName,
+      eventDateLabel,
+      eventYearLabel,
+    );
 
     await supabase
       .from("payments")

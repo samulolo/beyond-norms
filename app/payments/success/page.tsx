@@ -1,7 +1,13 @@
 
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { getStripeClient } from "@/utils/stripe";
+
+export const metadata: Metadata = {
+  title: "Booking Confirmed",
+  robots: { index: false, follow: false },
+};
 
 type PageProps = {
   searchParams: Promise<{ session_id?: string }>;

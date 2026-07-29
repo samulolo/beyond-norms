@@ -10,11 +10,7 @@ type FaqItem = {
 };
 
 const faqs: FaqItem[] = [
-  {
-    question: "How does the selection process work?",
-    answer:
-      "After requesting an invite, our team reviews each candidate's professional profile and goals. We aim for a balance across industries and seniority levels to ensure the best possible experience.",
-  },
+
   {
     question: "How does the Soul Speed Dating format work?",
     answer:
@@ -28,12 +24,12 @@ const faqs: FaqItem[] = [
   {
     question: "Is there an age requirement to attend?",
     answer:
-      "Yes, this event is for guests aged 21 and over. We may ask for ID at check-in.",
+      "Yes, this event is for guests aged 18 and over. We may ask for ID at check-in.",
   },
   {
     question: "Can you accommodate dietary restrictions?",
     answer:
-      "Yes. Vegetarian, vegan, and allergy-friendly options are available for the Dinner Show — just let us know your requirements after checkout and our team will take care of the rest.",
+      "Yes. Vegetarian, and allergy-friendly options are available for the Dinner Show just let us know your requirements before checkout and our team will take care of the rest.",
   },
   {
     question: "What is your cancellation policy?",
@@ -43,12 +39,17 @@ const faqs: FaqItem[] = [
   {
     question: "Is the event recorded?",
     answer:
-      "No. To preserve the privacy and openness of conversations, no photography, video, or audio recording takes place during the event.",
+      "No. To preserve the privacy and openness of conversations, no photography, video, or audio recording takes place during the event. Photos will only be possible at the very end of the evening.",
+  },
+  {
+    question: "What languages will be spoken at the event?",
+    answer:
+      "The evening is hosted primarily in English, with our team also fluent in Portuguese — feel free to mix and match with fellow guests depending on what feels most natural.",
   },
   {
     question: "Can I bring a guest?",
     answer:
-      "Additional seats are limited and subject to curation. Please indicate a guest in your invite request and our team will confirm availability.",
+      "Each ticket grants access for one individual only — it is not possible to bring additional guests.",
   },
 ];
 

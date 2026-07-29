@@ -9,11 +9,7 @@ import {
   organizerName,
 } from "@/utils/constant/const";
 
-const footerLinks = [
-  { label: "Privacy Policy", href: "#" },
-  { label: "Terms of Service", href: "#" },
-  { label: "Contact", href: "#contact" },
-];
+
 
 function InstagramIcon() {
   return (
@@ -121,7 +117,8 @@ export function Footer() {
               url: process.env.NEXT_PUBLIC_SITE_URL
             })
           } catch {
-            console.log("Houve um erro ao partilhar dados")
+            // Falha silenciosa: inclui o utilizador cancelar a partilha,
+            // o que não é um erro real e não vale a pena registar.
           }
         }}
           type="button"

@@ -1,3 +1,16 @@
+import { eventsPlans } from "@/data/plans";
+import {
+  contactEmail,
+  contactPhoneDisplay,
+  contactPhoneHref,
+  dinnerShowTime,
+  eventAddress,
+  instagramHandle,
+  instagramUrl,
+  organizerName,
+  soulSpeedDatingTime,
+} from "@/utils/constant/const";
+
 interface EmailTemplateProps {
   emailTo: string;
   customerName?: string;
@@ -80,7 +93,7 @@ export default function EmailTemplate({
   orderId = "12345",
   eventDate = "Oct 15",
   eventYear = "2026",
-  ticketPrice = "85.00",
+  ticketPrice = eventsPlans[0]?.price ?? "85.00",
 }: EmailTemplateProps) {
   return (
     <table
@@ -265,11 +278,11 @@ export default function EmailTemplate({
                                 />
                                 <DetailRow
                                   label="Soul Speed Dating"
-                                  value="07:00 PM – 08:30 PM"
+                                  value={soulSpeedDatingTime}
                                 />
                                 <DetailRow
                                   label="Dinner Show & Surprise Artists"
-                                  value="08:30 PM – 10:30 PM"
+                                  value={dinnerShowTime}
                                 />
                               </tbody>
                             </table>
@@ -354,7 +367,7 @@ export default function EmailTemplate({
                         color: colors.textMuted,
                       }}
                     >
-                      Organized by Nande Vahekeni
+                      Organized by {organizerName}
                     </p>
                     <p
                       style={{
@@ -364,7 +377,7 @@ export default function EmailTemplate({
                         color: colors.textMuted,
                       }}
                     >
-                      Rua dos Lusíadas, nº 4 A, 1300-370 Lisboa, Portugal
+                      {eventAddress}
                     </p>
                     <p
                       style={{
@@ -375,24 +388,24 @@ export default function EmailTemplate({
                       }}
                     >
                       <a
-                        href="tel:+351933820240"
+                        href={`tel:${contactPhoneHref}`}
                         style={{ color: colors.textMuted, textDecoration: "none" }}
                       >
-                        +351 933 820 240
+                        {contactPhoneDisplay}
                       </a>
                       {" · "}
                       <a
-                        href="mailto:contact@beyondnorms.net"
+                        href={`mailto:${contactEmail}`}
                         style={{ color: colors.textMuted, textDecoration: "none" }}
                       >
-                        contact@beyondnorms.net
+                        {contactEmail}
                       </a>
                       {" · "}
                       <a
-                        href="https://instagram.com/bn_beyondnorms"
+                        href={instagramUrl}
                         style={{ color: colors.textMuted, textDecoration: "none" }}
                       >
-                        @bn_beyondnorms
+                        @{instagramHandle}
                       </a>
                     </p>
                     <p

@@ -1,4 +1,5 @@
 import { Reveal } from "@/components/ui/reveal";
+import { dinnerShowTime, soulSpeedDatingTime } from "@/utils/constant/const";
 
 type ScheduleItem = {
   time: string;
@@ -15,7 +16,7 @@ const accentClasses = {
 
 const scheduleItems: ScheduleItem[] = [
   {
-    time: "07:00 PM – 08:30 PM",
+    time: soulSpeedDatingTime,
     title: "Soul Speed Dating",
     tag: "Beyond Norms",
     description:
@@ -23,7 +24,7 @@ const scheduleItems: ScheduleItem[] = [
     accent: "sage",
   },
   {
-    time: "08:30 PM – 10:30 PM",
+    time: dinnerShowTime,
     title: "Dinner Show",
     tag: "Surprise",
     description:
