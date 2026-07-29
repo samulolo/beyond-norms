@@ -1,4 +1,4 @@
-import Image from "next/image";
+
 import type { ComponentType } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,7 @@ import {
   instagramUrl,
   organizerName,
 } from "@/utils/constant/const";
-import saxophone from "@/public/images/saxophone.png";
+
 
 function PinIcon() {
   return (
@@ -125,17 +125,7 @@ export function Contact() {
       id="contact"
       className="relative overflow-hidden bg-primary/5 px-8 py-24 lg:px-16"
     >
-      <div
-        className="pointer-events-none absolute -right-6 top-10 hidden w-36 opacity-15 lg:block animate-float"
-        aria-hidden
-      >
-        <Image
-          src={saxophone}
-          alt=""
-          className="h-auto w-full object-contain"
-        />
-      </div>
-
+   
       <Reveal className="relative mx-auto flex max-w-2xl flex-col items-center gap-4 text-center">
         <span className="h-px w-10 bg-secondary" />
         <p className="font-sans text-sm font-semibold uppercase tracking-widest text-secondary">
