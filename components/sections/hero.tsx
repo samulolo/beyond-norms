@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
 import { eventYear } from "@/utils/constant/const";
 import tableDecor from "@/public/images/table-decor.jpg";
-import venueOverview from "@/public/images/venue-overview.jpg";
+import venueOverview from "@/public/images/hero-dinner.jpg";
 
 function CalendarIcon() {
   return (
@@ -48,7 +48,7 @@ export function Hero() {
       <Reveal className="relative h-[420px] w-full lg:h-[640px]">
         <Image
           src={venueOverview}
-          alt="BeyondNorms venue set up with long candlelit tables and a red stage curtain"
+          alt="Guests laughing and sharing a candlelit dinner at a long communal table"
           fill
           priority
           placeholder="blur"

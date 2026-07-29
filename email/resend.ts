@@ -5,7 +5,7 @@ import  EmailTemplate  from "@/components/email-template";
 const resendSecretKey = process.env.NEXT_RESEND_SECRET_KEY!
 const resend = new Resend(resendSecretKey)
 
-export const sendEmailConfirmation = async function(mailTo : string){
+export const sendEmailConfirmation = async function(mailTo : string, customerName?: string){
 
     if (!mailTo){
         throw new Error("O email do cliente é obrigatório")
@@ -17,7 +17,7 @@ export const sendEmailConfirmation = async function(mailTo : string){
         from: 'Acme <onboarding@resend.dev>',
         to: ['eliseufranco26@gmail.com'],
         subject: 'Hello world',
-        react: EmailTemplate({emailTo: mailTo})
+        react: EmailTemplate({ emailTo: mailTo, customerName })
     });
 
     if(error){

@@ -11,6 +11,13 @@ export async function createCheckoutSession() {
 
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
+    custom_fields: [
+      {
+        key: "full_name",
+        label: { type: "custom", custom: "Full name" },
+        type: "text", 
+      }
+    ],
     line_items: [
       {
         price_data: {

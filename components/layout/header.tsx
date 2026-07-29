@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 const navLinks = [
   { label: "Experience", href: "#experience" },
   { label: "Schedule", href: "#schedule" },
+  { label: "Contact", href: "#contact" },
 ];
 
 function MenuIcon() {

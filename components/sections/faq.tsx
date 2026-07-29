@@ -16,6 +16,31 @@ const faqs: FaqItem[] = [
       "After requesting an invite, our team reviews each candidate's professional profile and goals. We aim for a balance across industries and seniority levels to ensure the best possible experience.",
   },
   {
+    question: "How does the Soul Speed Dating format work?",
+    answer:
+      "You'll rotate through a series of short, one-on-one conversations guided by prompts crafted to go beyond small talk. No apps, no swiping — just real conversations, at your own pace.",
+  },
+  {
+    question: "What should I wear?",
+    answer:
+      "Elevated smart-casual. Think refined and comfortable rather than formal — you'll be moving between conversations and the Dinner Show, so choose something you feel confident and at ease in.",
+  },
+  {
+    question: "Is there an age requirement to attend?",
+    answer:
+      "Yes, this event is for guests aged 21 and over. We may ask for ID at check-in.",
+  },
+  {
+    question: "Can you accommodate dietary restrictions?",
+    answer:
+      "Yes. Vegetarian, vegan, and allergy-friendly options are available for the Dinner Show — just let us know your requirements after checkout and our team will take care of the rest.",
+  },
+  {
+    question: "What is your cancellation policy?",
+    answer:
+      "Tickets are non-refundable but fully transferable. If you can no longer attend, you're welcome to pass your spot to someone else — just reach out to our team with the new guest's details.",
+  },
+  {
     question: "Is the event recorded?",
     answer:
       "No. To preserve the privacy and openness of conversations, no photography, video, or audio recording takes place during the event.",

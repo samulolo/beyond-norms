@@ -2,10 +2,16 @@ import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 
 import { getStripeClient } from "@/utils/stripe";
-import { supabase } from "@/supabase/server";
+import { createClient } from "@/supabase/server";
 import { sendEmailConfirmation } from "@/email/resend";
 
 export async function POST(request: Request) {
+  // Nota (Agente 1): supabase/server.ts passou a expor `createClient()`
+  // assíncrono (SSR com cookies) em vez do antigo `export const supabase`.
+  // Este webhook não tem sessão de utilizador (chamada servidor-a-servidor
+  // da Stripe), pelo que o cliente atua como antes: sem sessão autenticada,
+  // sujeito às mesmas policies de RLS da tabela `payments`.
+  const supabase = await createClient();
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
   if (!webhookSecret) {
@@ -45,6 +51,9 @@ export async function POST(request: Request) {
 
   const session = event.data.object as Stripe.Checkout.Session;
   const email = session.customer_details?.email;
+  const customerName = session.custom_fields?.find(
+    (field) => field.key === "full_name",
+  )?.text?.value ?? undefined;
 
   if (!email) {
     console.log("Sessão sem email de cliente, a ignorar: ", session.id);
@@ -62,6 +71,7 @@ export async function POST(request: Request) {
           customer_email: email,
           status: session.payment_status ?? "completed",
           email_sent: false,
+          customer_name: customerName
         },
         { onConflict: "stripe_payment_id", ignoreDuplicates: true },
       )
@@ -95,7 +105,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ received: true, skipped: true });
     }
 
-    await sendEmailConfirmation(email);
+    await sendEmailConfirmation(email, customerName);
 
     await supabase
       .from("payments")

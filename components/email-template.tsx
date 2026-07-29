@@ -9,7 +9,7 @@ interface EmailTemplateProps {
 
 const colors = {
   bg: "#f7f5f0",
-  dark: "#18231c",
+  dark: "#212c23",
   white: "#ffffff",
   gold: "#a38f65",
   goldLight: "#c8b288",
@@ -320,6 +320,92 @@ export default function EmailTemplate({
                         </tr>
                       </tbody>
                     </table>
+                  </td>
+                </tr>
+
+                {/* Footer */}
+                <tr>
+                  <td style={{ padding: "32px 24px 0" }}>
+                    <HorizontalRule />
+                  </td>
+                </tr>
+
+                <tr>
+                  <td
+                    align="center"
+                    style={{ padding: "24px 24px 40px", textAlign: "center" }}
+                  >
+                    <p
+                      style={{
+                        margin: "0 0 4px",
+                        fontFamily: fontSans,
+                        fontSize: "13px",
+                        fontWeight: 600,
+                        color: colors.dark,
+                      }}
+                    >
+                      BeyondNorms
+                    </p>
+                    <p
+                      style={{
+                        margin: "0 0 4px",
+                        fontFamily: fontSans,
+                        fontSize: "12px",
+                        color: colors.textMuted,
+                      }}
+                    >
+                      Organized by Nande Vahekeni
+                    </p>
+                    <p
+                      style={{
+                        margin: "0 0 12px",
+                        fontFamily: fontSans,
+                        fontSize: "12px",
+                        color: colors.textMuted,
+                      }}
+                    >
+                      Rua dos Lusíadas, nº 4 A, 1300-370 Lisboa, Portugal
+                    </p>
+                    <p
+                      style={{
+                        margin: "0 0 16px",
+                        fontFamily: fontSans,
+                        fontSize: "12px",
+                        color: colors.textMuted,
+                      }}
+                    >
+                      <a
+                        href="tel:+351933820240"
+                        style={{ color: colors.textMuted, textDecoration: "none" }}
+                      >
+                        +351 933 820 240
+                      </a>
+                      {" · "}
+                      <a
+                        href="mailto:contact@beyondnorms.net"
+                        style={{ color: colors.textMuted, textDecoration: "none" }}
+                      >
+                        contact@beyondnorms.net
+                      </a>
+                      {" · "}
+                      <a
+                        href="https://instagram.com/bn_beyondnorms"
+                        style={{ color: colors.textMuted, textDecoration: "none" }}
+                      >
+                        @bn_beyondnorms
+                      </a>
+                    </p>
+                    <p
+                      style={{
+                        margin: 0,
+                        fontFamily: fontSans,
+                        fontSize: "11px",
+                        color: colors.textMuted,
+                      }}
+                    >
+                      &copy; {new Date().getFullYear()} BeyondNorms. All
+                      rights reserved.
+                    </p>
                   </td>
                 </tr>
               </tbody>

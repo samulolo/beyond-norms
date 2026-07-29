@@ -1,13 +1,8 @@
 import { createCheckoutSession } from "@/app/actions/checkout";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
+import { eventsPlans } from "@/data/plans";
 
-const features = [
-  "Soul Speed Dating Session",
-  "Dinner Show & Surprise Artists",
-  "Live Performances All Night",
-  "Curated Networking",
-];
 
 export function Pricing() {
   return (
@@ -25,17 +20,21 @@ export function Pricing() {
         </p>
       </Reveal>
 
-      <Reveal
-        delay={150}
-        className="mt-12 flex w-full max-w-sm flex-col gap-6 border border-secondary p-8 text-left"
-      >
+
+      {
+        eventsPlans.length > 0 && (
+          eventsPlans.map(plan => (
+            <Reveal key={plan.id}
+              delay={150}
+              className="mt-12 flex w-full max-w-sm flex-col gap-6 border border-secondary p-8 text-left"
+            >
+        
         <div className="flex flex-col gap-2">
           <h3 className="font-serif text-2xl text-primary">
-            Full Evening Access
+            {plan.name}
           </h3>
           <p className="font-sans text-sm text-neutral">
-            A complete experience combining Soul Speed Dating and our
-            signature Dinner Show.
+           {plan.description}
           </p>
         </div>
 
@@ -45,7 +44,7 @@ export function Pricing() {
         </p>
 
         <ul className="flex flex-col gap-3">
-          {features.map((feature) => (
+          {plan.features.map((feature) => (
             <li
               key={feature}
               className="flex items-center gap-2 font-sans text-sm text-primary"
@@ -66,6 +65,10 @@ export function Pricing() {
           </Button>
         </form>
       </Reveal>
+          ))
+        )
+      }
+      
     </section>
   );
 }

@@ -1,13 +1,36 @@
 import Link from "next/link";
 
+import {
+  contactEmail as emailContact,
+  contactPhoneDisplay as phoneDisplay,
+  contactPhoneHref as phoneHref,
+  eventAddress,
+  instagramUrl,
+  organizerName,
+} from "@/utils/constant/const";
+
 const footerLinks = [
   { label: "Privacy Policy", href: "#" },
   { label: "Terms of Service", href: "#" },
-  { label: "Contact", href: "#" },
+  { label: "Contact", href: "#contact" },
 ];
 
-
-const emailContact = process.env.NEXT_PUBLIC_EMAIL_CONTACT
+function InstagramIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      className="size-5"
+      aria-hidden
+    >
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.5" cy="6.5" r="0.75" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
 
 function ShareIcon() {
   return (
@@ -47,7 +70,7 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="flex flex-col gap-6 border-t border-primary/10 px-8 py-10 lg:flex-row lg:items-center lg:justify-between lg:px-16">
+    <footer className="flex flex-col gap-8 border-t border-primary/10 px-8 py-10 lg:flex-row lg:items-start lg:justify-between lg:px-16">
       <div className="flex flex-col gap-1">
         <span className="font-serif text-xl text-primary">BeyondNorms</span>
         <span className="font-sans text-xs text-neutral">
@@ -66,6 +89,26 @@ export function Footer() {
           </Link>
         ))}
       </nav> */}
+
+      <div className="flex flex-col gap-1 font-sans text-xs text-neutral">
+        <span className="text-primary/80">Organized by {organizerName}</span>
+        <span>{eventAddress}</span>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <a
+            href={`tel:${phoneHref}`}
+            className="transition-colors hover:text-secondary"
+          >
+            {phoneDisplay}
+          </a>
+          <span aria-hidden>&middot;</span>
+          <a
+            href={`mailto:${emailContact}`}
+            className="transition-colors hover:text-secondary"
+          >
+            {emailContact}
+          </a>
+        </div>
+      </div>
 
       <div className="flex items-center gap-4 text-primary">
         <button
@@ -87,6 +130,15 @@ export function Footer() {
         >
           <ShareIcon />
         </button>
+        <a
+          href={instagramUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Instagram"
+          className="transition-colors hover:text-secondary"
+        >
+          <InstagramIcon />
+        </a>
         <a href={`mailto:${emailContact}`}
           type="button"
           aria-label="Email"
