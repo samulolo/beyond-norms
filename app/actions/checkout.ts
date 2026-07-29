@@ -9,9 +9,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 export async function createCheckoutSession(formData: FormData) {
   const stripe = getStripeClient();
 
-  // Preço vem de data/plans.ts (fonte única) — não voltar a hardcodar
-  // um valor aqui. Se no futuro houver mais do que um plano, isto tem
-  // de passar a ler o plano escolhido (ex: um input hidden no form).
+
   const plan = eventsPlans[0];
   const ticketPriceEur = Number(plan.price);
 
@@ -25,10 +23,7 @@ export async function createCheckoutSession(formData: FormData) {
     ? String(formData.get("allergyDetails") ?? "").trim()
     : "";
 
-  // Nome e telefone são pedidos no nosso próprio formulário em /checkout,
-  // não pela Stripe — a Stripe fica só com a cobrança. Por isso não há
-  // "custom_fields" aqui; os dados seguem via metadata, tal como as
-  // restrições alimentares.
+
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
     metadata: {
