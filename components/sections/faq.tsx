@@ -17,11 +17,6 @@ const faqs: FaqItem[] = [
       "You'll rotate through a series of short, one-on-one conversations guided by prompts crafted to go beyond small talk. No apps, no swiping, just real conversations, at your own pace.",
   },
   {
-    question: "What should I wear?",
-    answer:
-      "Elevated smart-casual. Think refined and comfortable rather than formal. You'll be moving between conversations and the Dinner Show, so choose something you feel confident and at ease in.",
-  },
-  {
     question: "Is there an age requirement to attend?",
     answer:
       "Yes, this event is for guests aged 18 and over. We may ask for ID at check-in.",
