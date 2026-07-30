@@ -4,6 +4,7 @@ import  EmailTemplate  from "@/components/email-template";
 
 const resendSecretKey = process.env.NEXT_RESEND_SECRET_KEY!
 const resend = new Resend(resendSecretKey)
+const emailFrom = process.env.NEXT_PUBLIC_EMAIL_FROM!
 
 export const sendEmailConfirmation = async function(
   mailTo: string,
@@ -19,8 +20,8 @@ export const sendEmailConfirmation = async function(
     try {
 
       const { data, error } = await resend.emails.send({
-        from: 'Acme <onboarding@resend.dev>',
-        to: ['eliseufranco26@gmail.com'],
+        from: emailFrom,
+        to: [mailTo],
         subject: 'Hello world',
         react: EmailTemplate({ emailTo: mailTo, customerName, eventDate, eventYear })
     });
