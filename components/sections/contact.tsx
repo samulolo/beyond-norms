@@ -135,8 +135,7 @@ export function Contact() {
           We&apos;d Love to Hear From You
         </h2>
         <p className="font-sans text-base leading-relaxed text-neutral">
-          Questions about the evening, group bookings, or press inquiries
-          &mdash; our team is here to help.
+          Questions about the evening, group bookings, or press inquiries? Our team is here to help.
         </p>
       </Reveal>
 
