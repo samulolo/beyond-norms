@@ -32,7 +32,7 @@ const pillars: Pillar[] = [
   {
     title: "Authentic Connections",
     description:
-      "Meaningful exchanges beyond appearances — conversations built on vulnerability, energy, and emotional intelligence.",
+      "Meaningful exchanges beyond appearances, conversations built on vulnerability, energy, and emotional intelligence.",
     image: soulSpeedDating,
     alt: "Guests connecting over Soul Speed Dating on a rooftop at sunset",
     accent: "sage",
@@ -40,7 +40,7 @@ const pillars: Pillar[] = [
   {
     title: "Lasting Memories",
     description:
-      "Curated moments crafted to be felt, not forgotten — the start of stories that continue long after the night ends.",
+      "Curated moments crafted to be felt, not forgotten. The start of stories that continue long after the night ends.",
     image: hostSpeaking,
     alt: "Host speaking to guests on stage",
     accent: "terracotta",

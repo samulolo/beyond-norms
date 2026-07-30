@@ -41,7 +41,7 @@ export function Essence() {
           </p>
           <p>
             Join us and experience moments that are thoughtfully crafted just
-            for you &mdash; it&apos;s all about real people, real emotions,
+            for you. It&apos;s all about real people, real emotions,
             and real connections.
           </p>
         </div>

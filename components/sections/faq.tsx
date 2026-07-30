@@ -14,12 +14,12 @@ const faqs: FaqItem[] = [
   {
     question: "How does the Soul Speed Dating format work?",
     answer:
-      "You'll rotate through a series of short, one-on-one conversations guided by prompts crafted to go beyond small talk. No apps, no swiping — just real conversations, at your own pace.",
+      "You'll rotate through a series of short, one-on-one conversations guided by prompts crafted to go beyond small talk. No apps, no swiping, just real conversations, at your own pace.",
   },
   {
     question: "What should I wear?",
     answer:
-      "Elevated smart-casual. Think refined and comfortable rather than formal — you'll be moving between conversations and the Dinner Show, so choose something you feel confident and at ease in.",
+      "Elevated smart-casual. Think refined and comfortable rather than formal. You'll be moving between conversations and the Dinner Show, so choose something you feel confident and at ease in.",
   },
   {
     question: "Is there an age requirement to attend?",
@@ -34,7 +34,7 @@ const faqs: FaqItem[] = [
   {
     question: "What is your cancellation policy?",
     answer:
-      "Tickets are non-refundable but fully transferable. If you can no longer attend, you're welcome to pass your spot to someone else — just reach out to our team with the new guest's details.",
+      "Tickets are non-refundable but fully transferable. If you can no longer attend, you're welcome to pass your spot to someone else. Just reach out to our team with the new guest's details.",
   },
   {
     question: "Is the event recorded?",
@@ -44,12 +44,12 @@ const faqs: FaqItem[] = [
   {
     question: "What languages will be spoken at the event?",
     answer:
-      "The evening is hosted primarily in English, with our team also fluent in Portuguese — feel free to mix and match with fellow guests depending on what feels most natural.",
+      "The evening is hosted primarily in English, with our team also fluent in Portuguese. Feel free to mix and match with fellow guests depending on what feels most natural.",
   },
   {
     question: "Can I bring a guest?",
     answer:
-      "Each ticket grants access for one individual only — it is not possible to bring additional guests.",
+      "Each ticket grants access for one individual only. It is not possible to bring additional guests.",
   },
 ];
 

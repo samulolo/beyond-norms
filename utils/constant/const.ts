@@ -29,10 +29,10 @@ export const eventDates: EventDateOption[] = [
   },
   {
     id: "2026-09-21",
-    day: "21",
+    day: "3",
     month: "Sep",
-    label: "21 Sep",
-    full: `September 21, ${eventYear}`,
+    label: "3 Sep",
+    full: `September 3rd, ${eventYear}`,
   },
 ]
 

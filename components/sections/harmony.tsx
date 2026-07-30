@@ -35,7 +35,7 @@ export function Harmony() {
           <p>
             From captivating music to unexpected creative moments, every
             detail is designed to inspire connection, wonder, and
-            celebration &mdash; a multi-sensory journey crafted to create
+            celebration. A multi-sensory journey crafted to create
             lasting memories.
           </p>
         </div>

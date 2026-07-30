@@ -17,9 +17,9 @@ export const eventsPlans : PlansTypes[]  = [
         description: 'A complete experience combining Soul Speed Dating and our signature Dinner Show.',
         price: "0.5",
         features: [
+            "Welcome Drinks",
             "Soul Speed Dating Session",
             "Dinner Show & Surprise Artists",
-            "Live Performances All Night",
             "Curated Networking",
         ]
     },
