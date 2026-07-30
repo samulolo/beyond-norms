@@ -74,17 +74,14 @@ export function Footer() {
         </span>
       </div>
 
-      {/* <nav className="flex items-center gap-8">
-        {footerLinks.map((link) => (
-          <Link
-            key={link.label}
-            href={link.href}
-            className="font-sans text-sm text-primary/80 transition-colors hover:text-primary"
-          >
-            {link.label}
-          </Link>
-        ))}
-      </nav> */}
+      <nav className="flex items-center gap-8">
+        <Link
+          href="/privacy-policy"
+          className="font-sans text-xs uppercase tracking-widest text-primary/80 transition-colors hover:text-primary"
+        >
+          Privacy Policy
+        </Link>
+      </nav>
 
       <div className="flex flex-col gap-1 font-sans text-xs text-neutral">
         <span className="text-primary/80">Organized by {organizerName}</span>

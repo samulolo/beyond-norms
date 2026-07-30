@@ -2,11 +2,17 @@
 
 import { useState } from "react";
 
+import Link from "next/link";
+
 import { createCheckoutSession } from "@/app/actions/checkout";
 import { Button } from "@/components/ui/button";
 import { DateSelector } from "@/components/ui/date-selector";
 import { ErrorModal } from "@/components/ui/error-modal";
 import { dietaryRestrictionOptions, eventDates } from "@/utils/constant/const";
+import {
+  countryCodes,
+  defaultCountryCodeId,
+} from "@/utils/constant/country-codes";
 
 function isPastEventDate(id: string) {
   const today = new Date();
@@ -55,13 +61,31 @@ export function CheckoutForm() {
 
         <label className="flex flex-col gap-2 font-sans text-sm text-primary">
           <span className="text-neutral">Phone number</span>
-          <input
-            type="tel"
-            name="customerPhone"
-            required
-            placeholder="+351 900 000 000"
-            className="border border-primary/20 bg-transparent px-3 py-2 text-sm text-primary placeholder:text-neutral/50 focus:border-secondary focus:outline-none"
-          />
+          <div className="flex gap-2">
+            <select
+              name="countryCode"
+              defaultValue={defaultCountryCodeId}
+              aria-label="Country code"
+              className="border border-primary/20 bg-transparent px-2 py-2 text-sm text-primary focus:border-secondary focus:outline-none"
+            >
+              {countryCodes.map((country) => (
+                <option
+                  key={country.id}
+                  value={country.dialCode}
+                  className="bg-tertiary"
+                >
+                  {country.label}
+                </option>
+              ))}
+            </select>
+            <input
+              type="tel"
+              name="phoneNumber"
+              required
+              placeholder="900 000 000"
+              className="flex-1 border border-primary/20 bg-transparent px-3 py-2 text-sm text-primary placeholder:text-neutral/50 focus:border-secondary focus:outline-none"
+            />
+          </div>
         </label>
       </fieldset>
 
@@ -159,6 +183,19 @@ export function CheckoutForm() {
       <Button type="submit" className="w-full" loadingText="Redirecting to checkout…">
         Continue to Payment
       </Button>
+
+      <p className="-mt-4 text-center font-sans text-xs leading-relaxed text-neutral/70">
+        By continuing, you agree that we&apos;ll process your details
+        (including dietary/allergy information, if provided) as described
+        in our{" "}
+        <Link
+          href="/privacy-policy"
+          className="text-primary underline underline-offset-4 hover:text-secondary"
+        >
+          Privacy Policy
+        </Link>
+        .
+      </p>
 
       <ErrorModal
         open={showPastDateError}

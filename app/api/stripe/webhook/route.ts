@@ -99,6 +99,12 @@ export async function POST(request: Request) {
     ? matchedEventDate.full.split(", ")
     : [undefined, undefined];
 
+  // Número de bilhete mostrado no email: derivado do próprio ID da sessão
+  // Stripe (já único e estável), em vez de um valor inventado. Não é
+  // guardado à parte — se for preciso confirmar um bilhete, basta refazer
+  // este cálculo a partir de stripe_payment_id.
+  const ticketNumber = `BN-${session.id.slice(-8).toUpperCase()}`;
+
   if (!email) {
     console.log("Sessão sem email de cliente, a ignorar: ", session.id);
     return NextResponse.json({ received: true });
@@ -160,6 +166,7 @@ export async function POST(request: Request) {
       customerName,
       eventDateLabel,
       eventYearLabel,
+      ticketNumber,
     );
 
     await supabase

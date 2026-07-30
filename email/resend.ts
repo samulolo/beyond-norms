@@ -11,6 +11,7 @@ export const sendEmailConfirmation = async function(
   customerName?: string,
   eventDate?: string,
   eventYear?: string,
+  orderId?: string,
 ){
 
     if (!mailTo){
@@ -23,7 +24,7 @@ export const sendEmailConfirmation = async function(
         from: emailFrom,
         to: [mailTo],
         subject: 'Welcome to BeyondNorms — booking confirmed',
-        react: EmailTemplate({ emailTo: mailTo, customerName, eventDate, eventYear })
+        react: EmailTemplate({ emailTo: mailTo, customerName, eventDate, eventYear, orderId })
     });
 
     if(error){

@@ -14,7 +14,9 @@ export async function createCheckoutSession(formData: FormData) {
   const ticketPriceEur = Number(plan.price);
 
   const customerName = String(formData.get("customerName") ?? "").trim();
-  const customerPhone = String(formData.get("customerPhone") ?? "").trim();
+  const countryCode = String(formData.get("countryCode") ?? "").trim();
+  const phoneNumber = String(formData.get("phoneNumber") ?? "").trim();
+  const customerPhone = phoneNumber ? `${countryCode} ${phoneNumber}` : "";
   const eventDateId = String(formData.get("eventDate") ?? "");
   const dietaryRestrictions = formData.getAll("dietaryRestrictions").map(String);
   const dietaryOther = String(formData.get("dietaryOther") ?? "").trim();
@@ -26,6 +28,11 @@ export async function createCheckoutSession(formData: FormData) {
 
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
+    // Especificado explicitamente em vez de deixar a Stripe escolher
+    // automaticamente: se um destes métodos ficar com "Ação necessária"
+    // por resolver no Dashboard, falha de forma previsível (visível nos
+    // logs) em vez de a sessão inteira deixar de ter métodos válidos.
+    payment_method_types: ["card", "mb_way"],
     metadata: {
       customer_name: customerName,
       customer_phone: customerPhone,
