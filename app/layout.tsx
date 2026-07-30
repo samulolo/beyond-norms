@@ -55,9 +55,6 @@ export const metadata: Metadata = {
     description,
     images: [ogImage.url],
   },
-  icons: {
-    icon: "",
-  },
 };
 
 export default function RootLayout({
