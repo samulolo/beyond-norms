@@ -5,6 +5,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
+
 const navLinks = [
   { label: "Experience", href: "#experience" },
   { label: "Schedule", href: "#schedule" },
@@ -44,6 +45,8 @@ function CloseIcon() {
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
 
+  
+
   return (
     <header className="border-b border-primary/10 px-8 py-6 lg:px-16">
       <div className="flex items-center justify-between">
@@ -53,7 +56,7 @@ export function Header() {
         >
           BeyondNorms
         </Link>
-
+   
         <nav className="hidden items-center gap-10 md:flex">
           {navLinks.map((link) => (
             <Link

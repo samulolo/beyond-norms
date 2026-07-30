@@ -22,7 +22,7 @@ export const sendEmailConfirmation = async function(
       const { data, error } = await resend.emails.send({
         from: emailFrom,
         to: [mailTo],
-        subject: 'Hello world',
+        subject: 'Welcome to BeyondNorms — booking confirmed',
         react: EmailTemplate({ emailTo: mailTo, customerName, eventDate, eventYear })
     });
 
