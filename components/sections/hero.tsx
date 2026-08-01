@@ -163,7 +163,7 @@ export function Hero() {
           <Reveal delay={300}>
             <div className="mt-2 flex flex-wrap justify-center gap-4">
               <Button href="#tickets" variant="secondary">
-                Request Invite
+                Reserve Experience
               </Button>
               <Button href="#experience" variant="outline">
                 View Experience

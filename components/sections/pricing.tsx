@@ -28,7 +28,7 @@ export function Pricing() {
               className="mt-12 flex w-full max-w-sm flex-col gap-6 border border-secondary p-8 text-left"
             >
         
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 border border-secondary p-3">
           <h3 className="font-serif text-2xl text-primary">
             {plan.name}
           </h3>
@@ -37,7 +37,7 @@ export function Pricing() {
           </p>
         </div>
 
-        <p className="flex items-baseline gap-1 font-serif text-4xl text-primary">
+        <p className="flex items-baseline gap-1 font-serif text-5xl text-primary">
           &euro;{plan.price}
           <span className="font-sans text-sm text-neutral">/ Individual</span>
         </p>
