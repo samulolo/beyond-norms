@@ -48,19 +48,19 @@ const faqs: FaqItem[] = [
   },
 ];
 
-function ChevronIcon({ open }: { open: boolean }) {
+function PlusIcon({ open }: { open: boolean }) {
   return (
     <svg
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
       strokeWidth={1.5}
-      className={`size-5 shrink-0 text-primary transition-transform ${
-        open ? "rotate-180" : ""
+      className={`size-5 shrink-0 text-secondary transition-transform duration-300 ${
+        open ? "rotate-45" : ""
       }`}
       aria-hidden
     >
-      <path strokeLinecap="round" strokeLinejoin="round" d="m6 9 6 6 6-6" />
+      <path strokeLinecap="round" d="M12 5v14M5 12h14" />
     </svg>
   );
 }
@@ -90,7 +90,7 @@ export function Faq() {
                 aria-expanded={isOpen}
               >
                 {faq.question}
-                <ChevronIcon open={isOpen} />
+                <PlusIcon open={isOpen} />
               </button>
 
               <div

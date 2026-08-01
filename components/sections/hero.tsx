@@ -1,124 +1,184 @@
+"use client";
+
 import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
 import { eventDates, eventYear } from "@/utils/constant/const";
-import tableDecor from "@/public/images/table-decor.jpg";
-import venueOverview from "@/public/images/hero-dinner.jpg";
+import heroDinner from "@/public/images/hero-dinner.jpg";
 
-function CalendarIcon() {
+const navLinks = [
+  { label: "Experience", href: "#experience" },
+  { label: "Schedule", href: "#schedule" },
+  { label: "Contact", href: "#contact" },
+];
+
+function MenuIcon() {
   return (
     <svg
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
       strokeWidth={1.5}
-      className="size-4"
+      className="size-6"
       aria-hidden
     >
-      <rect x="3" y="5" width="18" height="16" rx="2" />
-      <path strokeLinecap="round" d="M8 3v4M16 3v4M3 10h18" />
+      <path strokeLinecap="round" d="M4 7h16M4 12h16M4 17h16" />
     </svg>
   );
 }
 
-function PinIcon() {
+function CloseIcon() {
   return (
     <svg
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
       strokeWidth={1.5}
-      className="size-3.5"
+      className="size-6"
       aria-hidden
     >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M12 21s7-6.5 7-11.5A7 7 0 0 0 5 9.5C5 14.5 12 21 12 21Z"
-      />
-      <circle cx="12" cy="9.5" r="2.5" />
+      <path strokeLinecap="round" d="M6 6l12 12M18 6 6 18" />
     </svg>
   );
 }
 
 export function Hero() {
-  return (
-    <section className="grid gap-16 bg-tertiary px-8 py-16 lg:grid-cols-2 lg:items-center lg:gap-16 lg:px-16 lg:py-20">
-      <Reveal className="relative h-[420px] w-full lg:h-[640px]">
-        <Image
-          src={venueOverview}
-          alt="Guests laughing and sharing a candlelit dinner at a long communal table"
-          fill
-          priority
-          placeholder="blur"
-          className="object-cover"
-          sizes="(min-width: 1024px) 50vw, 100vw"
-        />
+  const [isOpen, setIsOpen] = useState(false);
 
-        <div className="absolute -bottom-8 -right-4 hidden w-48 flex-col gap-3 border border-primary/10 bg-tertiary p-3 shadow-xl sm:flex">
-          <div className="relative aspect-square w-full overflow-hidden">
-            <Image
-              src={tableDecor}
-              alt="Candlelit table decor at the venue"
-              fill
-              placeholder="blur"
-              className="object-cover"
-              sizes="192px"
-            />
+  return (
+    <section className="relative flex min-h-[100svh] flex-col overflow-hidden bg-tertiary">
+      <Image
+        src={heroDinner}
+        alt="Guests laughing and sharing a candlelit dinner at a long communal table"
+        fill
+        priority
+        placeholder="blur"
+        className="object-cover"
+        sizes="100vw"
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-tertiary/85 via-tertiary/35 to-tertiary/90" />
+
+      <div className="relative z-10 flex flex-1 flex-col">
+        <div className="flex items-center justify-between px-8 py-6 lg:px-16">
+          <Link
+            href="/"
+            className="font-serif text-xl tracking-[0.2em] text-primary"
+          >
+            BEYOND NORMS
+          </Link>
+
+          <nav className="hidden items-center gap-10 md:flex">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="font-sans text-sm text-primary/90 transition-colors hover:text-secondary"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+
+          <div className="flex items-center gap-4">
+            <div className="hidden md:block">
+              <Button href="#tickets" variant="outline-gold" size="sm">
+                Reserve Your Evening
+              </Button>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsOpen((open) => !open)}
+              className="text-primary md:hidden"
+              aria-label={isOpen ? "Close menu" : "Open menu"}
+              aria-expanded={isOpen}
+            >
+              {isOpen ? <CloseIcon /> : <MenuIcon />}
+            </button>
           </div>
-          <div className="flex items-center justify-between gap-2">
-            <p className="font-sans text-xs uppercase tracking-wide text-primary">
-              Rooftop Ferroviario
-              <br />
-              Lisbon
-            </p>
-            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-secondary text-tertiary">
-              <PinIcon />
+        </div>
+
+        <div
+          className={`grid transition-all duration-300 ease-out md:hidden ${
+            isOpen
+              ? "grid-rows-[1fr] opacity-100"
+              : "grid-rows-[0fr] opacity-0"
+          }`}
+        >
+          <nav className="flex flex-col items-center gap-6 overflow-hidden px-8 pb-8">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setIsOpen(false)}
+                className="font-serif text-2xl text-primary"
+              >
+                {link.label}
+              </Link>
+            ))}
+            <Button
+              href="#tickets"
+              variant="outline-gold"
+              onClick={() => setIsOpen(false)}
+              className="mt-2 w-full max-w-xs"
+            >
+              Reserve Your Evening
+            </Button>
+          </nav>
+        </div>
+
+        <div className="hidden justify-center px-8 pt-4 lg:flex lg:px-16">
+          <div className="flex items-center gap-2 border border-primary/20 bg-tertiary/40 px-4 py-2 backdrop-blur-sm">
+            <span className="size-1.5 rounded-full bg-secondary" aria-hidden />
+            <span className="font-sans text-xs uppercase tracking-widest text-primary">
+              Rooftop Ferroviário, Lisbon
             </span>
           </div>
         </div>
-      </Reveal>
 
-      <div className="flex flex-col gap-6">
-        <Reveal className="flex items-center gap-3">
-          <span className="flex size-10 items-center justify-center rounded-full border border-secondary text-secondary">
-            <CalendarIcon />
-          </span>
-          <p className="font-sans text-sm font-semibold uppercase tracking-widest text-secondary">
-            Lisbon &middot; {eventDates.map((date) => date.label).join(" & ")}
-            , {eventYear}
+        <div className="flex flex-1 flex-col items-center justify-center gap-6 px-8 py-16 text-center lg:px-16">
+          <Reveal>
+            <p className="font-sans text-sm font-semibold uppercase tracking-[0.3em] text-secondary">
+              Lisbon &middot;{" "}
+              {eventDates.map((date) => date.label).join(" & ")}, {eventYear}
+            </p>
+          </Reveal>
+
+          <Reveal delay={100}>
+            <h1 className="max-w-4xl font-serif text-5xl italic leading-[1.1] text-primary sm:text-6xl lg:text-8xl">
+              Create. Connect. Celebrate.
+            </h1>
+          </Reveal>
+
+          <Reveal delay={200}>
+            <p className="max-w-xl font-sans text-lg leading-relaxed text-primary/80">
+              Two rare experiences woven into one unforgettable evening,
+              real people, real emotion, real connection.
+            </p>
+          </Reveal>
+
+          <Reveal delay={300}>
+            <div className="mt-2 flex flex-wrap justify-center gap-4">
+              <Button href="#tickets" variant="secondary">
+                Request Invite
+              </Button>
+              <Button href="#experience" variant="outline">
+                View Experience
+              </Button>
+            </div>
+          </Reveal>
+        </div>
+
+        <div className="border-y border-secondary/20 bg-tertiary/95 px-8 py-4 lg:px-16">
+          <p className="text-center font-sans text-xs uppercase tracking-[0.3em] text-secondary sm:text-sm">
+            Soul Speed Dating
+            <span className="mx-3 text-secondary/50">&times;</span>
+            Dinner Show &amp; Surprise Artists
           </p>
-        </Reveal>
-
-        <Reveal delay={100}>
-          <h1 className="font-serif text-6xl leading-[1.05] text-primary lg:text-7xl">
-            Create.
-            <br />
-            Connect.
-            <br />
-            Celebrate.
-          </h1>
-        </Reveal>
-
-        <Reveal delay={200}>
-          <p className="max-w-md font-sans text-lg leading-relaxed text-neutral">
-            Two unique experiences, one unforgettable evening.
-            Real people, real emotions, real connections.
-          </p>
-        </Reveal>
-
-
-        <Reveal delay={300}>
-          <div className="mt-2 flex flex-wrap gap-4">
-            <Button href="#tickets" icon>
-              Request Invite
-            </Button>
-            <Button href="#experience" variant="outline">
-              View Experience
-            </Button>
-          </div>
-        </Reveal>
+        </div>
       </div>
     </section>
   );

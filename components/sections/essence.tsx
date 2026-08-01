@@ -1,50 +1,34 @@
-import Image from "next/image";
-
 import { Reveal } from "@/components/ui/reveal";
-import venueOverview from "@/public/images/venue-overview.jpg";
 
 export function Essence() {
   return (
     <section
       id="experience"
-      className="grid gap-12 px-8 py-24 lg:grid-cols-2 lg:items-center lg:gap-20 lg:px-16"
+      className="flex flex-col items-center gap-10 px-8 py-24 text-center lg:px-16"
     >
-      <Reveal className="relative aspect-4/5 w-full overflow-hidden">
-        <Image
-          src={venueOverview}
-          alt="Beyond Norms venue set up with long candlelit tables and a red stage curtain"
-          fill
-          placeholder="blur"
-          className="object-cover"
-          sizes="(min-width: 1024px) 50vw, 100vw"
-        />
-      </Reveal>
-
-      <Reveal delay={150} className="flex flex-col gap-6">
-        <span className="h-px w-10 bg-secondary" />
-
-        <h2 className="font-serif text-4xl text-primary lg:text-5xl">
+      <Reveal className="flex flex-col items-center gap-4">
+        <p className="font-sans text-sm font-semibold uppercase tracking-[0.3em] text-secondary">
+          The Experience
+        </p>
+        <h2 className="font-serif text-4xl text-primary lg:text-6xl">
           Curated Human Experiences
         </h2>
+        <span className="h-px w-10 bg-secondary" />
+      </Reveal>
 
-        <p className="font-sans text-sm font-semibold uppercase tracking-widest text-secondary">
-          Drop social masks &middot; Feel safe to be authentic &middot;
-          Connect beyond appearances &middot; Share presence, not performance
+      <Reveal
+        delay={150}
+        className="flex max-w-2xl flex-col gap-6 font-sans text-base leading-relaxed text-neutral"
+      >
+        <p>
+          Drop the social masks. Feel safe to be authentic. Connect beyond
+          appearances, and share presence rather than performance.
         </p>
-
-        <div className="flex flex-col gap-4 font-sans text-base leading-relaxed text-neutral">
-          <p>
-            Get ready to dive into a unique event where we celebrate the
-            beauty of human connection like never before. Whether you&apos;re
-            looking to explore new stories, share your own, or just live new
-            emotions, this is the place to be.
-          </p>
-          <p>
-            Join us and experience moments that are thoughtfully crafted just
-            for you. It&apos;s all about real people, real emotions,
-            and real connections.
-          </p>
-        </div>
+        <p>
+          Every detail of the evening is thoughtfully crafted, an invitation
+          to explore new stories, share your own, and feel emotions worth
+          remembering.
+        </p>
       </Reveal>
     </section>
   );
