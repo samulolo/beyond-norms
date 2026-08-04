@@ -7,11 +7,7 @@ import { sendEmailConfirmation } from "@/email/resend";
 import { eventDates } from "@/utils/constant/const";
 
 export async function POST(request: Request) {
-  // Nota (Agente 1): supabase/server.ts passou a expor `createClient()`
-  // assíncrono (SSR com cookies) em vez do antigo `export const supabase`.
-  // Este webhook não tem sessão de utilizador (chamada servidor-a-servidor
-  // da Stripe), pelo que o cliente atua como antes: sem sessão autenticada,
-  // sujeito às mesmas policies de RLS da tabela `payments`.
+
   const supabase = await createClient();
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
@@ -46,12 +42,7 @@ export async function POST(request: Request) {
     );
   }
 
-  // "checkout.session.completed" cobre métodos síncronos (cartão) — já
-  // vem com payment_status "paid". Métodos assíncronos (ex: MB WAY,
-  // Multibanco, transferência) também disparam este evento, mas ainda
-  // "unpaid" nessa altura; só ficam "paid" mais tarde, via
-  // "checkout.session.async_payment_succeeded". Por isso ouvimos os
-  // dois e confirmamos sempre payment_status antes de processar.
+
   const relevantEventTypes = [
     "checkout.session.completed",
     "checkout.session.async_payment_succeeded",
@@ -73,8 +64,7 @@ export async function POST(request: Request) {
   }
 
   const email = session.customer_details?.email;
-  // Nome e telefone vêm do nosso formulário em /checkout (via metadata),
-  // não dos custom_fields da Stripe — a Stripe só trata do pagamento.
+
   const customerName = session.metadata?.customer_name || undefined;
   const customerPhone = session.metadata?.customer_phone || undefined;
 
@@ -93,16 +83,11 @@ export async function POST(request: Request) {
 
   const eventDateId = session.metadata?.event_date || null;
   const matchedEventDate = eventDates.find((date) => date.id === eventDateId);
-  // "full" vem como "August 20, 2026" — separamos em duas partes porque é
-  // assim que o EmailTemplate espera (props eventDate / eventYear).
+
   const [eventDateLabel, eventYearLabel] = matchedEventDate
     ? matchedEventDate.full.split(", ")
     : [undefined, undefined];
 
-  // Número de bilhete mostrado no email: derivado do próprio ID da sessão
-  // Stripe (já único e estável), em vez de um valor inventado. Não é
-  // guardado à parte — se for preciso confirmar um bilhete, basta refazer
-  // este cálculo a partir de stripe_payment_id.
   const ticketNumber = `BN-${session.id.slice(-8).toUpperCase()}`;
 
   if (!email) {
@@ -111,8 +96,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    // Tenta "reclamar" esta sessão inserindo a linha. Se já existir
-    // (evento repetido pela Stripe), o insert é ignorado e não devolve linha.
+
     const { data: inserted, error: insertError } = await supabase
       .from("payments")
       .upsert(
@@ -142,8 +126,7 @@ export async function POST(request: Request) {
     let shouldSendEmail = Boolean(inserted);
 
     if (!inserted) {
-      // Já existia uma linha para este session_id: só reenviamos o email
-      // se uma tentativa anterior falhou antes de o marcar como enviado.
+
       const { data: existing } = await supabase
         .from("payments")
         .select("email_sent")
