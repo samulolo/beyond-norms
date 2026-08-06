@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 
 import { getStripeClient } from "@/utils/stripe";
+import { getPostHogClient } from "@/utils/posthog-server";
 import { createClient } from "@/supabase/server";
 import { sendEmailConfirmation } from "@/email/resend";
 import { eventDates } from "@/utils/constant/const";
@@ -158,6 +159,20 @@ export async function POST(request: Request) {
       .from("payments")
       .update({ email_sent: true, status: "completed" })
       .eq("stripe_payment_id", session.id);
+
+    const posthog = getPostHogClient();
+    if (posthog) {
+      posthog.capture({
+        event: "payment_completed",
+        properties: {
+          event_date_id: eventDateId,
+          amount_total: session.amount_total ?? undefined,
+          currency: session.currency ?? undefined,
+          payment_method: session.payment_method_types?.[0] ?? undefined,
+        },
+      });
+      await posthog.shutdown();
+    }
   } catch (err) {
     console.log("Erro ao processar checkout.session.completed: ", err);
     return NextResponse.json({ error: "Erro no processamento" }, { status: 500 });

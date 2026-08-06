@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { getStripeClient } from "@/utils/stripe";
+import { getPostHogClient } from "@/utils/posthog-server";
 import { eventsPlans } from "@/data/plans";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -63,6 +64,18 @@ export async function createCheckoutSession(formData: FormData) {
 
   if (!session.url) {
     throw new Error("Stripe did not return a checkout URL.");
+  }
+
+  const posthog = getPostHogClient();
+  if (posthog) {
+    posthog.capture({
+      event: "checkout_session_created",
+      properties: {
+        event_date_id: eventDateId,
+        ticket_price_eur: ticketPriceEur,
+      },
+    });
+    await posthog.shutdown();
   }
 
   redirect(session.url);

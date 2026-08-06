@@ -1,6 +1,7 @@
 "use server";
 
 import { sendNewsletterConfirmation } from "@/email/resend";
+import { getPostHogClient } from "@/utils/posthog-server";
 import { createClient } from "@/supabase/server";
 
 type NewsletterState = {
@@ -47,6 +48,17 @@ export async function subscribeToNewsletter(
     }
 
     await sendNewsletterConfirmation(email);
+
+    const posthog = getPostHogClient();
+    if (posthog) {
+      posthog.capture({
+        event: "newsletter_subscribed",
+        properties: {
+          already_subscribed: error?.code === "23505",
+        },
+      });
+      await posthog.shutdown();
+    }
 
     return {
       status: "success",
