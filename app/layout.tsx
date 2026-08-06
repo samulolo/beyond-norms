@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Hanken_Grotesk } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
 
 const playfairDisplay = Playfair_Display({
   variable: "--font-headline",
@@ -34,7 +35,7 @@ export const metadata: Metadata = {
   keywords: [
     "speed dating Lisbon",
     "dinner show Lisbon",
-    "singles event Lisbon",
+    "singles experience Lisbon",
     "BeyondNorms",
   ],
   alternates: {
@@ -67,7 +68,10 @@ export default function RootLayout({
       lang="en"
       className={`${playfairDisplay.variable} ${hankenGrotesk.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+         <Analytics />
+      </body>
     </html>
   );
 }

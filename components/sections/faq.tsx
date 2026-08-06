@@ -19,7 +19,7 @@ const faqs: FaqItem[] = [
   {
     question: "Is there an age requirement to attend?",
     answer:
-      "Yes, this event is for guests aged 18 and over. We may ask for ID at check-in.",
+      "Yes, this experience is for guests aged 18 and over. We may ask for ID at check-in.",
   },
   {
     question: "Can you accommodate dietary restrictions?",
@@ -32,12 +32,12 @@ const faqs: FaqItem[] = [
       "Tickets are non-refundable but fully transferable. If you can no longer attend, you're welcome to pass your spot to someone else. Just reach out to our team with the new guest's details.",
   },
   {
-    question: "Is the event recorded?",
+    question: "Is the evening recorded?",
     answer:
-      "No. To preserve the privacy and openness of conversations, no photography, video, or audio recording takes place during the event. Photos will only be possible at the very end of the evening.",
+      "No. To preserve the privacy and openness of conversations, no photography, video, or audio recording takes place during the gathering. Photos will only be possible at the very end of the evening.",
   },
   {
-    question: "What languages will be spoken at the event?",
+    question: "What languages will be spoken during the evening?",
     answer:
       "The evening is hosted primarily in English, with our team also fluent in Portuguese. Feel free to mix and match with fellow guests depending on what feels most natural.",
   },

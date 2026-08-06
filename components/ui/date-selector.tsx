@@ -18,7 +18,7 @@ export function DateSelector({
   return (
     <div
       role="radiogroup"
-      aria-label="Choose event date"
+      aria-label="Choose experience date"
       className={`inline-flex flex-wrap items-center gap-2 ${className}`}
     >
       {options.map((option) => {

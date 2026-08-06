@@ -21,7 +21,7 @@ export default async function AdminLoginPage({ searchParams }: PageProps) {
         <span className="h-px w-10 bg-secondary" />
         <h1 className="mt-4 font-serif text-3xl text-primary">Admin</h1>
         <p className="mt-2 font-sans text-sm text-neutral">
-          Restricted access for event organizers.
+          Restricted access for experience hosts.
         </p>
 
         <form action={login} className="mt-8 flex flex-col gap-4">

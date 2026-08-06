@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import  EmailTemplate  from "@/components/email-template";
+import { NewsletterEmailTemplate } from "@/components/newsletter-email-template";
 
 
 const resendSecretKey = process.env.NEXT_RESEND_SECRET_KEY!
@@ -40,3 +41,28 @@ export const sendEmailConfirmation = async function(
     }
 
 }
+
+export const sendNewsletterConfirmation = async function(mailTo: string) {
+  if (!mailTo) {
+    throw new Error("O email do subscritor é obrigatório");
+  }
+
+  try {
+    const { data, error } = await resend.emails.send({
+      from: emailFrom,
+      to: [mailTo],
+      subject: "Welcome to Beyond Norms community",
+      react: NewsletterEmailTemplate({ emailTo: mailTo }),
+    });
+
+    if (error) {
+      console.log("Houve um erro ao enviar confirmação da newsletter: ", error);
+      return;
+    }
+
+    console.log("Email de newsletter enviado com sucesso: ", data);
+  } catch (err) {
+    console.log("ERRO NO ENVIO DE EMAIL DA NEWSLETTER: ", err);
+    throw new Error("Houve um erro ao enviar email de confirmação da newsletter");
+  }
+};

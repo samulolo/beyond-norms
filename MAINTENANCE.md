@@ -106,6 +106,18 @@ alter table payments
 notify pgrst, 'reload schema';
 ```
 
+Para a receita da dashboard refletir o valor real pago em cada checkout
+(e não o preço atual em `data/plans.ts`), a tabela também deve guardar o
+total vindo da Stripe:
+
+```sql
+alter table payments
+  add column if not exists amount_total integer,
+  add column if not exists currency text;
+
+notify pgrst, 'reload schema';
+```
+
 ## Dívida técnica conhecida (por resolver)
 
 1. **RLS da tabela `payments` no Supabase usa a chave anon/publishable**,

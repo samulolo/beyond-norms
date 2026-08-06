@@ -4,7 +4,12 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { useFormStatus } from "react-dom";
 
-type ButtonVariant = "primary" | "outline" | "secondary" | "outline-gold";
+type ButtonVariant =
+  | "primary"
+  | "outline"
+  | "secondary"
+  | "gold-white"
+  | "outline-gold";
 type ButtonSize = "sm" | "md";
 
 const variantClasses: Record<ButtonVariant, string> = {
@@ -12,6 +17,7 @@ const variantClasses: Record<ButtonVariant, string> = {
   outline:
     "border border-primary text-primary hover:bg-primary hover:text-tertiary",
   secondary: "bg-secondary text-tertiary hover:opacity-90",
+  "gold-white": "bg-secondary text-primary hover:opacity-90",
   "outline-gold":
     "border border-secondary text-secondary hover:bg-secondary hover:text-tertiary",
 };
@@ -37,6 +43,7 @@ const iconWrapperClasses: Record<ButtonVariant, string> = {
   primary: "bg-tertiary text-primary",
   outline: "bg-primary text-tertiary",
   secondary: "bg-tertiary text-secondary",
+  "gold-white": "bg-tertiary text-primary",
   "outline-gold": "bg-secondary text-tertiary",
 };
 
@@ -44,6 +51,7 @@ const spinnerClasses: Record<ButtonVariant, string> = {
   primary: "border-tertiary/30 border-t-tertiary",
   outline: "border-primary/30 border-t-primary",
   secondary: "border-tertiary/30 border-t-tertiary",
+  "gold-white": "border-primary/30 border-t-primary",
   "outline-gold": "border-secondary/30 border-t-secondary",
 };
 

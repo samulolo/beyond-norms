@@ -42,7 +42,7 @@ export function Footer() {
           try {
             await navigator.share({
               title: "BeyondNorms",
-              text: "Checkout this incredible event",
+              text: "Discover this incredible experience",
               url: process.env.NEXT_PUBLIC_SITE_URL,
             });
           } catch {

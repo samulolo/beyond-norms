@@ -108,6 +108,8 @@ export async function POST(request: Request) {
           customer_name: customerName,
           customer_phone: customerPhone,
           event_date_id: eventDateId,
+          amount_total: session.amount_total,
+          currency: session.currency,
           dietary_restrictions: dietaryRestrictions,
           dietary_other: dietaryOther,
           has_allergies: hasAllergies,

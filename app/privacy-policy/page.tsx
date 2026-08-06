@@ -39,7 +39,7 @@ export default function PrivacyPolicyPage() {
 
         <Section title="Who we are">
           <p>
-            This event is organized by {organizerName}. This policy explains
+            This experience is organized by {organizerName}. This policy explains
             what personal data we collect when you book a ticket through
             this website, why we collect it, and what rights you have over
             it. If anything here is unclear, contact us at{" "}
@@ -64,7 +64,7 @@ export default function PrivacyPolicyPage() {
               back to us to send your confirmation.
             </li>
             <li className="list-disc">
-              The event date you choose (20 August or 21 September 2026).
+              The experience date you choose (20 August or 21 September 2026).
             </li>
             <li className="list-disc">
               Dietary restrictions and, if you choose to share them,
@@ -90,7 +90,7 @@ export default function PrivacyPolicyPage() {
           <p>
             We use this data to process your ticket purchase, send you a
             booking confirmation by email, verify your reservation on the
-            night of the event, and — where relevant — accommodate dietary
+            night of the experience, and — where relevant — accommodate dietary
             restrictions or allergies during the Dinner Show.
           </p>
         </Section>
@@ -98,7 +98,7 @@ export default function PrivacyPolicyPage() {
         <Section title="Who we share it with">
           <p>
             We share data with a small number of service providers, only as
-            needed to run this event:
+            needed to host this experience:
           </p>
           <ul className="flex flex-col gap-2 pl-4">
             <li className="list-disc">
@@ -122,7 +122,7 @@ export default function PrivacyPolicyPage() {
             <li className="list-disc">
               <span className="text-primary">Supabase</span> — stores your
               reservation record (name, phone, email, dietary/allergy
-              information, event date) securely in our database.
+              information, experience date) securely in our database.
             </li>
           </ul>
           <p>We do not sell your data, and we do not use it for advertising.</p>
@@ -142,7 +142,7 @@ export default function PrivacyPolicyPage() {
         <Section title="How long we keep it">
           <p>
             We keep booking records for as long as reasonably necessary to
-            run the event and meet our accounting and legal obligations,
+            host the experience and meet our accounting and legal obligations,
             and delete or anonymize them afterwards unless we&apos;re
             required to keep them for longer.
           </p>

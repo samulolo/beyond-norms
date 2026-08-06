@@ -200,7 +200,7 @@ export function CheckoutForm() {
       <ErrorModal
         open={showPastDateError}
         title="That date has already happened"
-        message="This event date is in the past. Please choose one of the upcoming dates to continue with your reservation."
+        message="This experience date is in the past. Please choose one of the upcoming dates to continue with your reservation."
         onClose={() => setShowPastDateError(false)}
       />
     </form>

@@ -1,15 +1,18 @@
-import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
+import { ReserveSeatButton } from "@/components/ui/reserve-seat-button";
+import { SeatsAvailable } from "@/components/ui/seats-available";
 import { eventsPlans } from "@/data/plans";
-
 
 export function Pricing() {
   return (
     <section
       id="tickets"
-      className="flex flex-col items-center gap-4 px-8 py-24 text-center lg:px-16"
+      className="flex flex-col items-center px-8 py-24 text-center lg:px-16"
     >
       <Reveal>
+        <p className="font-sans text-sm font-semibold uppercase tracking-[0.3em] text-secondary">
+          Tickets
+        </p>
         <h2 className="font-serif text-4xl text-primary lg:text-5xl">
           Choose Your Experience
         </h2>
@@ -19,49 +22,66 @@ export function Pricing() {
         </p>
       </Reveal>
 
+      {eventsPlans.length > 0 &&
+        eventsPlans.map((plan) => (
+          <Reveal
+            key={plan.id}
+            delay={150}
+            className="mt-14 w-full max-w-md text-left"
+          >
+            <div className="relative overflow-hidden border border-secondary/60 bg-primary/5 p-8 shadow-[0_24px_80px_rgba(0,0,0,0.24)] backdrop-blur-sm sm:p-10">
+              <SeatsAvailable
+                layout="stacked"
+                className="mb-8 sm:absolute sm:right-0 sm:top-0 sm:mb-0 sm:w-36 sm:border-r-0 sm:border-t-0"
+              />
 
-      {
-        eventsPlans.length > 0 && (
-          eventsPlans.map(plan => (
-            <Reveal key={plan.id}
-              delay={150}
-              className="mt-12 flex w-full max-w-sm flex-col gap-6 border border-secondary p-8 text-left"
-            >
-        
-        <div className="flex flex-col gap-2 border border-secondary p-3">
-          <h3 className="font-serif text-2xl text-primary">
-            {plan.name}
-          </h3>
-          <p className="font-sans text-sm text-neutral">
-           {plan.description}
-          </p>
-        </div>
+              <div className="flex flex-col gap-4 sm:pr-40">
+                <span className="h-px w-10 bg-secondary" />
+                <div>
+                  <h3 className="font-serif text-3xl leading-tight text-primary">
+                    {plan.name}
+                  </h3>
+                  <p className="mt-3 font-sans text-sm leading-relaxed text-neutral">
+                    {plan.description}
+                  </p>
+                </div>
+              </div>
 
-        <p className="flex items-baseline gap-1 font-serif text-5xl text-primary">
-          &euro;{plan.price}
-          <span className="font-sans text-sm text-neutral">/ Individual</span>
-        </p>
+              <div className="my-8 h-px bg-primary/10" />
 
-        <ul className="flex flex-col gap-3">
-          {plan.features.map((feature) => (
-            <li
-              key={feature}
-              className="flex items-center gap-2 font-sans text-sm text-primary"
-            >
-              <span className="text-sage">&#10003;</span>
-              {feature}
-            </li>
-          ))}
-        </ul>
+              <div className="flex items-end justify-between gap-6">
+                <p className="font-serif text-6xl leading-none text-primary">
+                  &euro;{plan.price}
+                </p>
+                <span className="pb-2 font-sans text-xs uppercase tracking-[0.2em] text-neutral">
+                  Individual
+                </span>
+              </div>
 
-        <Button href="/checkout" className="w-full">
-          Reserve Experience
-        </Button>
-      </Reveal>
-          ))
-        )
-      }
-      
+              <ul className="mt-8 flex flex-col gap-4">
+                {plan.features.map((feature) => (
+                  <li
+                    key={feature}
+                    className="flex items-start gap-3 font-sans text-sm leading-relaxed text-primary"
+                  >
+                    <span
+                      className="mt-1 flex size-5 shrink-0 items-center justify-center rounded-full border border-secondary text-xs text-secondary"
+                      aria-hidden
+                    >
+                      &#10003;
+                    </span>
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <ReserveSeatButton href="/checkout" className="mt-10 w-full" />
+              <p className="mt-4 text-center font-sans text-xs font-semibold uppercase tracking-[0.18em] text-secondary">
+                Limited capacity to keep the evening intimate.
+              </p>
+            </div>
+          </Reveal>
+        ))}
     </section>
   );
 }

@@ -4,7 +4,6 @@ import { logout } from "@/app/actions/admin";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/supabase/server";
 import { eventDates } from "@/utils/constant/const";
-import { eventsPlans } from "@/data/plans";
 
 export const metadata: Metadata = {
   title: "Admin — Sales",
@@ -24,6 +23,8 @@ type Payment = {
   dietary_other: string | null;
   has_allergies: boolean | null;
   allergy_details: string | null;
+  amount_total: number | null;
+  currency: string | null;
   created_at?: string;
 };
 
@@ -69,12 +70,29 @@ function formatRestrictions(payment: Payment) {
   return parts.length ? parts.join(" · ") : "—";
 }
 
+function isConfirmedPayment(payment: Payment) {
+  return payment.status === "paid" || payment.status === "completed";
+}
+
+function formatPaymentAmount(payment: Payment) {
+  if (typeof payment.amount_total !== "number") return "—";
+
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: payment.currency?.toUpperCase() ?? "EUR",
+  }).format(payment.amount_total / 100);
+}
+
 export default async function AdminPage() {
   const payments = await getPayments();
-  const ticketPrice = Number(eventsPlans[0]?.price ?? 0);
 
-  const completedPayments = payments.filter((p) => p.status === "completed");
-  const totalRevenue = completedPayments.length * ticketPrice;
+  const completedPayments = payments.filter(isConfirmedPayment);
+  const totalRevenue = completedPayments.reduce(
+    (total, payment) => total + (payment.amount_total ?? 0),
+    0,
+  );
+  const totalCurrency =
+    completedPayments.find((payment) => payment.currency)?.currency ?? "eur";
 
   const salesByDate = eventDates.map((date) => ({
     ...date,
@@ -112,7 +130,10 @@ export default async function AdminPage() {
             Total revenue
           </p>
           <p className="mt-3 font-serif text-4xl text-primary">
-            &euro;{totalRevenue.toFixed(2)}
+            {new Intl.NumberFormat("en-US", {
+              style: "currency",
+              currency: totalCurrency.toUpperCase(),
+            }).format(totalRevenue / 100)}
           </p>
         </div>
 
@@ -138,7 +159,8 @@ export default async function AdminPage() {
               <th className="px-4 py-3">Name</th>
               <th className="px-4 py-3">Email</th>
               <th className="px-4 py-3">Phone</th>
-              <th className="px-4 py-3">Event date</th>
+              <th className="px-4 py-3">Experience date</th>
+              <th className="px-4 py-3">Amount</th>
               <th className="px-4 py-3">Status</th>
               <th className="px-4 py-3">Dietary / Allergies</th>
             </tr>
@@ -157,6 +179,7 @@ export default async function AdminPage() {
                 <td className="px-4 py-3">
                   {formatEventDate(payment.event_date_id)}
                 </td>
+                <td className="px-4 py-3">{formatPaymentAmount(payment)}</td>
                 <td className="px-4 py-3 capitalize">{payment.status}</td>
                 <td className="px-4 py-3">{formatRestrictions(payment)}</td>
               </tr>
@@ -165,7 +188,7 @@ export default async function AdminPage() {
             {payments.length === 0 && (
               <tr>
                 <td
-                  colSpan={6}
+                  colSpan={7}
                   className="px-4 py-10 text-center text-neutral"
                 >
                   No sales recorded yet.

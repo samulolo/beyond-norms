@@ -1,6 +1,6 @@
 // Lista curada de indicativos de país para o campo de telemóvel em
 // /checkout. Não é exaustiva (não inclui todos os ~200 países) — cobre os
-// mercados mais prováveis para um evento em Lisboa (Portugal em primeiro,
+// mercados mais prováveis para uma experiência em Lisboa (Portugal em primeiro,
 // por ser o público maioritário) e os principais destinos de onde
 // estrangeiros costumam vir. Fácil de estender: só adicionar uma entrada.
 
