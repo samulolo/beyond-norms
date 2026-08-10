@@ -8,6 +8,11 @@ export const eventAddress = "Rua dos Lusíadas, nº 4 A, 1300-370 Lisboa, Portug
 export const contactPhoneDisplay = "+351 933 820 240"
 export const contactPhoneHref = "+351933820240"
 export const contactEmail = process.env.NEXT_PUBLIC_EMAIL_CONTACT ?? "contact@beyondnorms.net"
+
+// Para onde vai o aviso interno de "nova compra recebida", enviado a par
+// do email de confirmação do cliente (ver app/api/stripe/webhook/route.ts).
+export const saleNotificationEmail =
+  process.env.SALE_NOTIFICATION_EMAIL ?? "nande.vahakeni@beyondnorms.net"
 export const instagramHandle = "bn_beyondnorms"
 export const instagramUrl = `https://instagram.com/${instagramHandle}`
 

@@ -75,6 +75,7 @@ Ver secção própria mais abaixo.
 | `NEXT_PUBLIC_EMAIL_FROM` | Remetente do email de confirmação, formato `"Nome <email@dominio.com>"`. O domínio tem de estar verificado no Resend. |
 | `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Ligação à tabela `payments`, usada para não reenviar o email duas vezes para a mesma compra, e para o dashboard de admin ler as vendas. |
 | `NEXT_PUBLIC_EMAIL_CONTACT` | Email de contacto público, mostrado no site. |
+| `SALE_NOTIFICATION_EMAIL` | Para onde vai o aviso interno de "nova compra recebida" (ver `utils/constant/const.ts`). Sem esta env, usa `nande.vahakeni@beyondnorms.net` por omissão. |
 | `ADMIN_PASSWORD` | Password única para entrar em `/admin`. Sem esta env definida, `/admin` fica sempre inacessível (por segurança, não abre por omissão). |
 
 ## Dashboard de admin (`/admin`)
@@ -158,8 +159,11 @@ notify pgrst, 'reload schema';
 5. O webhook grava a compra em `payments` (Supabase, com verificação de
    idempotência), gera um número de bilhete (`BN-` + últimos 8
    caracteres do `session.id`, em maiúsculas — não é guardado à parte,
-   é sempre recalculado a partir do `stripe_payment_id`) e envia o email
-   de confirmação via `email/resend.ts`.
+   é sempre recalculado a partir do `stripe_payment_id`) e responde à
+   Stripe. Email de confirmação ao cliente, aviso interno de nova venda
+   (`sendSaleNotification`, para `SALE_NOTIFICATION_EMAIL`) e o evento do
+   PostHog correm depois de responder, via `after()` — cada um com o seu
+   próprio try/catch, para a falha de um não impedir os outros.
 6. Stripe redireciona o browser do cliente para
    `app/payments/success/page.tsx` — só apresentação, não envia nada.
 

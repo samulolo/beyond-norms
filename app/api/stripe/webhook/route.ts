@@ -4,7 +4,7 @@ import type Stripe from "stripe";
 import { getStripeClient } from "@/utils/stripe";
 import { getPostHogClient } from "@/utils/posthog-server";
 import { createClient } from "@/supabase/server";
-import { sendEmailConfirmation } from "@/email/resend";
+import { sendEmailConfirmation, sendSaleNotification } from "@/email/resend";
 import { eventDates } from "@/utils/constant/const";
 
 // A Stripe reporta "não foi possível ligar" quando a função demora demasiado
@@ -154,9 +154,19 @@ export async function POST(request: Request) {
     }
 
     // O pagamento já está gravado (parte essencial e idempotente) — a
-    // Stripe pode receber o 200 agora. Email e analytics não bloqueiam a
-    // resposta; correm depois via after(), para nunca arriscar estourar o
-    // limite de tempo da função e a Stripe reportar falha de ligação.
+    // Stripe pode receber o 200 agora. Email, aviso interno e analytics não
+    // bloqueiam a resposta; correm depois via after(), para nunca arriscar
+    // estourar o limite de tempo da função e a Stripe reportar falha de
+    // ligação. Cada efeito tem o seu próprio try/catch para que a falha de
+    // um (ex.: aviso interno) não impeça os outros (ex.: email do cliente).
+    const amountTotalLabel =
+      session.amount_total != null && session.currency
+        ? new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: session.currency.toUpperCase(),
+          }).format(session.amount_total / 100)
+        : undefined;
+
     after(async () => {
       try {
         await sendEmailConfirmation(
@@ -171,7 +181,37 @@ export async function POST(request: Request) {
           .from("payments")
           .update({ email_sent: true, status: "completed" })
           .eq("stripe_payment_id", session.id);
+      } catch (err) {
+        console.log(
+          "Erro em background (email de confirmação) após pagamento gravado: ",
+          session.id,
+          err,
+        );
+      }
 
+      try {
+        await sendSaleNotification({
+          customerEmail: email,
+          customerName,
+          customerPhone,
+          eventDate: eventDateLabel,
+          eventYear: eventYearLabel,
+          orderId: ticketNumber,
+          amountTotal: amountTotalLabel,
+          dietaryRestrictions,
+          dietaryOther,
+          hasAllergies,
+          allergyDetails,
+        });
+      } catch (err) {
+        console.log(
+          "Erro em background (aviso interno de venda) após pagamento gravado: ",
+          session.id,
+          err,
+        );
+      }
+
+      try {
         const posthog = getPostHogClient();
         if (posthog) {
           posthog.capture({
@@ -187,7 +227,7 @@ export async function POST(request: Request) {
         }
       } catch (err) {
         console.log(
-          "Erro em background (email/analytics) após pagamento gravado: ",
+          "Erro em background (posthog) após pagamento gravado: ",
           session.id,
           err,
         );
