@@ -73,7 +73,8 @@ Ver secção própria mais abaixo.
 | `NEXT_PUBLIC_SITE_URL` | Tem de ser o domínio real em produção (https). Se ficar em localhost, os redirects da Stripe e a imagem do produto no checkout partem-se. |
 | `NEXT_RESEND_SECRET_KEY` | Chave da conta Resend, usada para enviar o email de confirmação. |
 | `NEXT_PUBLIC_EMAIL_FROM` | Remetente do email de confirmação, formato `"Nome <email@dominio.com>"`. O domínio tem de estar verificado no Resend. |
-| `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Ligação à tabela `payments`, usada para não reenviar o email duas vezes para a mesma compra, e para o dashboard de admin ler as vendas. |
+| `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Ligação pública ao Supabase, usada pelo dashboard de admin para ler as vendas. A publishable key não deve ser `service_role`. |
+| `SUPABASE_SERVICE_ROLE_KEY` | Chave server-only usada pelo webhook da Stripe para gravar/atualizar `payments` sem depender de RLS. Configurar na Vercel sem prefixo `NEXT_PUBLIC_`. |
 | `NEXT_PUBLIC_EMAIL_CONTACT` | Email de contacto público, mostrado no site. |
 | `SALE_NOTIFICATION_EMAIL` | Para onde vai o aviso interno de "nova compra recebida" (ver `utils/constant/const.ts`). Sem esta env, usa `nande.vahakeni@beyondnorms.net` por omissão. |
 | `ADMIN_PASSWORD` | Password única para entrar em `/admin`. Sem esta env definida, `/admin` fica sempre inacessível (por segurança, não abre por omissão). |
@@ -121,13 +122,12 @@ notify pgrst, 'reload schema';
 
 ## Dívida técnica conhecida (por resolver)
 
-1. **RLS da tabela `payments` no Supabase usa a chave anon/publishable**,
-   que fica exposta no browser (prefixo `NEXT_PUBLIC_`). As políticas
-   atuais permitem insert/select/update a qualquer pessoa com essa key.
-   O dashboard de admin lê a mesma tabela com a mesma key — a proteção
-   de `/admin` é só a password, não o RLS. Recomendado migrar o webhook
-   (e o admin) para usar a `service_role` key (só no servidor) antes de
-   operar com pagamentos reais em maior escala.
+1. **Dashboard de admin ainda lê `payments` com a publishable key.**
+   O webhook da Stripe já usa `SUPABASE_SERVICE_ROLE_KEY` server-only
+   para gravar/atualizar compras, mas o dashboard de admin continua a ler
+   com `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` e proteção por password em
+   `/admin`. Em maior escala, vale a pena migrar também o dashboard para
+   leitura server-only com políticas mais restritas.
 
 2. **Não existem Termos de Serviço.** Só a Política de Privacidade foi
    criada (`app/privacy-policy/page.tsx`). Termos de Serviço (política de
@@ -153,20 +153,47 @@ notify pgrst, 'reload schema';
 3. Submete o formulário → `app/actions/checkout.ts` cria a sessão Stripe
    (nome/telefone/restrições vão na metadata da sessão — a Stripe só
    trata do pagamento em si) e redireciona para o checkout hospedado.
-4. Stripe confirma o pagamento → chama
-   `app/api/stripe/webhook/route.ts` (server-to-server, não depende do
-   browser do cliente).
-5. O webhook grava a compra em `payments` (Supabase, com verificação de
-   idempotência), gera um número de bilhete (`BN-` + últimos 8
-   caracteres do `session.id`, em maiúsculas — não é guardado à parte,
-   é sempre recalculado a partir do `stripe_payment_id`) e responde à
-   Stripe. Email de confirmação ao cliente, aviso interno de nova venda
-   (`sendSaleNotification`, para `SALE_NOTIFICATION_EMAIL`) e o evento do
-   PostHog correm depois de responder, via `after()` — cada um com o seu
-   próprio try/catch, para a falha de um não impedir os outros.
-6. Stripe redireciona o browser do cliente para
-   `app/payments/success/page.tsx` — só apresentação, não envia nada.
+4. A gravação em `payments` e o envio dos emails (confirmação ao cliente +
+   aviso interno de venda) estão centralizados em
+   `utils/process-payment.ts` (`processCompletedCheckout`), gera um
+   número de bilhete (`BN-` + últimos 8 caracteres do `session.id`, em
+   maiúsculas — não é guardado à parte, é sempre recalculado a partir do
+   `stripe_payment_id`), grava com verificação de idempotência (chave
+   `stripe_payment_id` + flag `email_sent`) e deixa o evento do PostHog a
+   correr depois via `after()`. É chamado a partir de **dois sítios**,
+   por causa do problema de conectividade abaixo:
+   - `app/api/stripe/webhook/route.ts` — o caminho "oficial",
+     server-to-server, chamado pela Stripe.
+   - `app/payments/success/page.tsx` — rede de segurança, chamado quando
+     o browser do próprio cliente carrega a página de sucesso ao voltar
+     do checkout hospedado.
+5. Stripe redireciona o browser do cliente para
+   `app/payments/success/page.tsx`, que busca a sessão completa (via
+   `session_id` no URL) e chama `processCompletedCheckout` também — ver
+   nota abaixo sobre porquê.
 
 Para testar tudo isto localmente, é preciso o `stripe listen --forward-to
 http://localhost:3000/api/stripe/webhook` a correr em paralelo ao
 `npm run dev` (ver Stripe CLI).
+
+### Falhas de conectividade do webhook (10 de agosto de 2026)
+
+A partir de 4 de agosto de 2026, o endpoint `/api/stripe/webhook` começou
+a falhar entregas vindas da Stripe com o erro **"Failed to connect to
+remote host"** — uma falha de ligação pura (DNS/TCP/TLS), não um erro da
+aplicação. Foi investigado e descartado, por esta ordem: tempo de
+execução da função (corrigido com `maxDuration` + `after()`, mas não
+resolveu sozinho), DNS (confirmado correto — CNAME válido para a
+Vercel), Firewall/Bot Protection do projeto (nada configurado), e o
+plano Hobby da Vercel (fez-se upgrade para Pro, e continuou a falhar).
+Pedidos vindos do browser (`/checkout`, `/`) chegam sempre; só o
+servidor-a-servidor da Stripe é afetado — por isso `processCompletedCheckout`
+passou a ser chamado também a partir de `app/payments/success/page.tsx`,
+que é carregada pelo browser do próprio cliente e por isso chega sempre.
+Isto garante que a compra fica registada e os emails saem mesmo enquanto
+a causa raiz da falha do webhook não for encontrada (candidato mais
+provável por eliminação: algo na rede entre a Stripe e a Vercel,
+possivelmente a resolver com o suporte da Vercel, já acessível no plano
+Pro). Se o webhook voltar a funcionar normalmente, este código não
+precisa de ser revertido — a idempotência por `stripe_payment_id` torna
+seguro ter os dois caminhos ativos ao mesmo tempo.

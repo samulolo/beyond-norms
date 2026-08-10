@@ -3,24 +3,27 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { getStripeClient } from "@/utils/stripe";
+import { processCompletedCheckout } from "@/utils/process-payment";
 
 export const metadata: Metadata = {
   title: "Booking Confirmed",
   robots: { index: false, follow: false },
 };
 
+// Dá margem à gravação em Supabase + envio de emails (ver nota abaixo),
+// mesmo alinhamento do webhook em app/api/stripe/webhook/route.ts.
+export const maxDuration = 30;
+
 type PageProps = {
   searchParams: Promise<{ session_id?: string }>;
 };
 
-async function getCustomerEmail(sessionId: string | undefined) {
+async function getSession(sessionId: string | undefined) {
   if (!sessionId) return null;
 
   try {
     const stripe = getStripeClient();
-    const session = await stripe.checkout.sessions.retrieve(sessionId);
-
-    return session.customer_details?.email ?? null;
+    return await stripe.checkout.sessions.retrieve(sessionId);
   } catch {
     return null;
   }
@@ -30,12 +33,29 @@ export default async function PaymentSuccessPage({
   searchParams,
 }: PageProps) {
   const { session_id } = await searchParams;
-  const email = await getCustomerEmail(session_id);
+  const session = await getSession(session_id);
+  const email = session?.customer_details?.email ?? null;
 
-  // O email de confirmação é enviado pelo webhook da Stripe
-  // (app/api/stripe/webhook/route.ts), com idempotência garantida pela
-  // tabela `payments` no Supabase. Esta página é só apresentação — pode
-  // ser recarregada/revisitada sem disparar novos envios.
+  // Rede de segurança: o webhook da Stripe (app/api/stripe/webhook) devia
+  // ser quem grava o pagamento e envia os emails, mas os pedidos que a
+  // Stripe faz de servidor-a-servidor para esse endpoint têm estado a
+  // falhar a ligação de forma persistente ("Failed to connect to remote
+  // host", ver MAINTENANCE.md). O pedido que carrega esta página vem do
+  // browser do próprio cliente, ao ser redirecionado de volta do checkout
+  // — esse chega sempre. processCompletedCheckout() é idempotente (chave
+  // é `stripe_payment_id`), por isso é seguro chamá-lo aqui mesmo que o
+  // webhook também tenha tratado (ou venha a tratar) da mesma sessão.
+  if (session) {
+    try {
+      await processCompletedCheckout(session);
+    } catch (err) {
+      console.log(
+        "Erro ao processar pagamento na página de sucesso: ",
+        session.id,
+        err,
+      );
+    }
+  }
 
   return (
     <section className="flex flex-1 flex-col items-center justify-center gap-6 bg-tertiary px-8 py-24 text-center lg:px-16">
