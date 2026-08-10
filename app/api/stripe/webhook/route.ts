@@ -233,6 +233,8 @@ export async function POST(request: Request) {
         );
       }
     });
+
+    return NextResponse.json({ received: true, processed: true });
   } catch (err) {
     console.log("Erro ao processar checkout.session.completed: ", err);
     return NextResponse.json({ error: "Erro no processamento" }, { status: 500 });

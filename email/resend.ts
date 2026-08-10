@@ -5,9 +5,24 @@ import SaleNotificationEmail from "@/components/sale-notification-email";
 import { saleNotificationEmail } from "@/utils/constant/const";
 
 
-const resendSecretKey = process.env.NEXT_RESEND_SECRET_KEY!
-const resend = new Resend(resendSecretKey)
-const emailFrom = process.env.NEXT_PUBLIC_EMAIL_FROM!
+let resend: Resend | null = null;
+
+function getEmailConfig() {
+  const resendSecretKey = process.env.NEXT_RESEND_SECRET_KEY;
+  const emailFrom = process.env.NEXT_PUBLIC_EMAIL_FROM;
+
+  if (!resendSecretKey) {
+    throw new Error("NEXT_RESEND_SECRET_KEY não está configurada");
+  }
+
+  if (!emailFrom) {
+    throw new Error("NEXT_PUBLIC_EMAIL_FROM não está configurada");
+  }
+
+  resend ??= new Resend(resendSecretKey);
+
+  return { emailFrom, resend };
+}
 
 export const sendEmailConfirmation = async function(
   mailTo: string,
@@ -22,6 +37,7 @@ export const sendEmailConfirmation = async function(
     }
 
     try {
+      const { emailFrom, resend } = getEmailConfig();
 
       const { data, error } = await resend.emails.send({
         from: emailFrom,
@@ -32,7 +48,7 @@ export const sendEmailConfirmation = async function(
 
     if(error){
         console.log("Houve um erro ao enviar confirmação: ", error)
-        return
+        throw new Error("A Resend recusou o envio do email de confirmação")
     }
 
     console.log("Email enviado com sucesso: ", data)
@@ -63,6 +79,8 @@ interface SaleNotificationInput {
 // quem chama trata o erro (ver app/api/stripe/webhook/route.ts).
 export const sendSaleNotification = async function (input: SaleNotificationInput) {
   try {
+    const { emailFrom, resend } = getEmailConfig();
+
     const { data, error } = await resend.emails.send({
       from: emailFrom,
       to: [saleNotificationEmail],
@@ -84,7 +102,7 @@ export const sendSaleNotification = async function (input: SaleNotificationInput
 
     if (error) {
       console.log("Houve um erro ao enviar aviso interno de venda: ", error);
-      return;
+      throw new Error("A Resend recusou o envio do aviso interno de venda");
     }
 
     console.log("Aviso interno de venda enviado com sucesso: ", data);
@@ -100,6 +118,8 @@ export const sendNewsletterConfirmation = async function(mailTo: string) {
   }
 
   try {
+    const { emailFrom, resend } = getEmailConfig();
+
     const { data, error } = await resend.emails.send({
       from: emailFrom,
       to: [mailTo],
@@ -109,7 +129,7 @@ export const sendNewsletterConfirmation = async function(mailTo: string) {
 
     if (error) {
       console.log("Houve um erro ao enviar confirmação da newsletter: ", error);
-      return;
+      throw new Error("A Resend recusou o envio do email da newsletter");
     }
 
     console.log("Email de newsletter enviado com sucesso: ", data);
