@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import type Stripe from "stripe";
 
 import { getStripeClient } from "@/utils/stripe";
@@ -6,6 +6,12 @@ import { getPostHogClient } from "@/utils/posthog-server";
 import { createClient } from "@/supabase/server";
 import { sendEmailConfirmation } from "@/email/resend";
 import { eventDates } from "@/utils/constant/const";
+
+// A Stripe reporta "não foi possível ligar" quando a função demora demasiado
+// a responder (ex.: cold start + Supabase + Resend + PostHog em série, tudo
+// aguardado antes do 200). Isto dá margem à função em si; o trabalho não
+// essencial corre depois da resposta via `after()`, ver mais abaixo.
+export const maxDuration = 30;
 
 export async function POST(request: Request) {
 
@@ -147,32 +153,46 @@ export async function POST(request: Request) {
       return NextResponse.json({ received: true, skipped: true });
     }
 
-    await sendEmailConfirmation(
-      email,
-      customerName,
-      eventDateLabel,
-      eventYearLabel,
-      ticketNumber,
-    );
+    // O pagamento já está gravado (parte essencial e idempotente) — a
+    // Stripe pode receber o 200 agora. Email e analytics não bloqueiam a
+    // resposta; correm depois via after(), para nunca arriscar estourar o
+    // limite de tempo da função e a Stripe reportar falha de ligação.
+    after(async () => {
+      try {
+        await sendEmailConfirmation(
+          email,
+          customerName,
+          eventDateLabel,
+          eventYearLabel,
+          ticketNumber,
+        );
 
-    await supabase
-      .from("payments")
-      .update({ email_sent: true, status: "completed" })
-      .eq("stripe_payment_id", session.id);
+        await supabase
+          .from("payments")
+          .update({ email_sent: true, status: "completed" })
+          .eq("stripe_payment_id", session.id);
 
-    const posthog = getPostHogClient();
-    if (posthog) {
-      posthog.capture({
-        event: "payment_completed",
-        properties: {
-          event_date_id: eventDateId,
-          amount_total: session.amount_total ?? undefined,
-          currency: session.currency ?? undefined,
-          payment_method: session.payment_method_types?.[0] ?? undefined,
-        },
-      });
-      await posthog.shutdown();
-    }
+        const posthog = getPostHogClient();
+        if (posthog) {
+          posthog.capture({
+            event: "payment_completed",
+            properties: {
+              event_date_id: eventDateId,
+              amount_total: session.amount_total ?? undefined,
+              currency: session.currency ?? undefined,
+              payment_method: session.payment_method_types?.[0] ?? undefined,
+            },
+          });
+          await posthog.shutdown();
+        }
+      } catch (err) {
+        console.log(
+          "Erro em background (email/analytics) após pagamento gravado: ",
+          session.id,
+          err,
+        );
+      }
+    });
   } catch (err) {
     console.log("Erro ao processar checkout.session.completed: ", err);
     return NextResponse.json({ error: "Erro no processamento" }, { status: 500 });
