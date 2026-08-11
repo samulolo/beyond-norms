@@ -25,13 +25,13 @@ export type EventDateOption = {
 };
 
 export const eventDates: EventDateOption[] = [
-  {
-    id: "2026-08-20",
-    day: "20",
-    month: "Aug",
-    label: "20 Aug",
-    full: `August 20, ${eventYear}`,
-  },
+  // {
+  //   id: "2026-08-20",
+  //   day: "20",
+  //   month: "Aug",
+  //   label: "20 Aug",
+  //   full: `August 20, ${eventYear}`,
+  // },
   {
     id: "2026-09-21",
     day: "3",
