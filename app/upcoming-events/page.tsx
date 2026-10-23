@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { ShareQr } from "@/components/ui/share-qr";
 import { getUpcomingEvents } from "@/data/upcoming-events";
 import { instagramHandle, instagramUrl } from "@/utils/constant/const";
 
@@ -122,6 +123,8 @@ export default function UpcomingEventsPage() {
             </div>
           </div>
         )}
+
+        <ShareQr />
       </div>
     </section>
   );

@@ -73,10 +73,11 @@ Ver secção própria mais abaixo.
 | `NEXT_PUBLIC_SITE_URL` | Tem de ser o domínio real em produção (https). Se ficar em localhost, os redirects da Stripe e a imagem do produto no checkout partem-se. |
 | `NEXT_RESEND_SECRET_KEY` | Chave da conta Resend, usada para enviar o email de confirmação. |
 | `NEXT_PUBLIC_EMAIL_FROM` | Remetente do email de confirmação, formato `"Nome <email@dominio.com>"`. O domínio tem de estar verificado no Resend. |
-| `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Ligação pública ao Supabase, usada pelo dashboard de admin para ler as vendas. A publishable key não deve ser `service_role`. |
-| `SUPABASE_SERVICE_ROLE_KEY` | Chave server-only usada pelo webhook da Stripe para gravar/atualizar `payments` sem depender de RLS. Configurar na Vercel sem prefixo `NEXT_PUBLIC_`. |
+| `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Ligação pública ao Supabase, usada para inserir subscrições da newsletter e feedback. A publishable key não deve ser `service_role`. |
+| `SUPABASE_SERVICE_ROLE_KEY` | Chave server-only usada pelo webhook da Stripe para gravar/atualizar `payments` e pelo dashboard `/admin` para os ler (a tabela tem RLS sem policies). Configurar na Vercel sem prefixo `NEXT_PUBLIC_`. |
 | `NEXT_PUBLIC_EMAIL_CONTACT` | Email de contacto público, mostrado no site. |
-| `SALE_NOTIFICATION_EMAIL` | Para onde vai o aviso interno de "nova compra recebida" (ver `utils/constant/const.ts`). Sem esta env, usa `nande.vahakeni@beyondnorms.net` por omissão. |
+| `SALE_NOTIFICATION_EMAIL` | Para onde vai o aviso interno de "nova compra recebida" (ver `utils/constant/const.ts`). Sem esta env, usa `nande.vahekeni@beyondnorms.net` por omissão. |
+| `FEEDBACK_NOTIFICATION_EMAIL` | Para onde vai o aviso interno de "novo feedback" enviado a cada submissão em `/feedback`. Sem esta env, usa o mesmo destino de `SALE_NOTIFICATION_EMAIL`. |
 | `ADMIN_PASSWORD` | Password única para entrar em `/admin`. Sem esta env definida, `/admin` fica sempre inacessível (por segurança, não abre por omissão). |
 
 ## Dashboard de admin (`/admin`)
@@ -97,49 +98,62 @@ mais pessoas precisarem de acesso com permissões diferentes, vale a pena
 migrar para Supabase Auth em vez de continuar a esticar este esquema de
 password única.
 
-**Antes de usar**: correr o SQL abaixo no Supabase para garantir que a
-tabela `payments` tem a coluna `created_at` (necessária para ordenar a
-lista por data de compra):
+**Base de dados**: a tabela `payments` é criada pela migration
+`supabase/migrations/20261023000001_create_payments.sql` (ver secção
+"Base de dados (Supabase)").
 
-```sql
-alter table payments
-  add column if not exists created_at timestamptz not null default now();
+## Página de feedback (`/feedback`)
 
-notify pgrst, 'reload schema';
-```
+Formulário simples (nome, email e mensagem) para os participantes dizerem o que
+acharam da experiência. A server action está em `app/actions/feedback.ts`
+e grava na tabela `feedback` do Supabase com a publishable key. Tem um
+campo escondido (honeypot `website`) contra bots de spam.
 
-Para a receita da dashboard refletir o valor real pago em cada checkout
-(e não o preço atual em `data/plans.ts`), a tabela também deve guardar o
-total vindo da Stripe:
+A cada feedback gravado, é enviado um aviso por email (`sendFeedbackNotification`
+em `email/resend.ts`) para `FEEDBACK_NOTIFICATION_EMAIL`, com o reply-to
+apontado para o email da pessoa — basta responder ao aviso para lhe
+escrever. Se o envio falhar, o feedback fica gravado na mesma.
 
-```sql
-alter table payments
-  add column if not exists amount_total integer,
-  add column if not exists currency text;
+**Base de dados**: a tabela `feedback` é criada pela migration
+`supabase/migrations/20261023000003_create_feedback.sql`. A policy só
+permite **inserir** a partir do site — ninguém consegue ler as mensagens
+com a publishable key; para as ver, usar o Table Editor do Supabase.
 
-notify pgrst, 'reload schema';
-```
+## Base de dados (Supabase)
+
+O esquema completo está em `supabase/migrations/`, um ficheiro por tabela,
+por ordem:
+
+| Migration | Tabela | Quem escreve |
+| --- | --- | --- |
+| `20261023000001_create_payments.sql` | `payments` | Webhook da Stripe / `/payments/success` (service role key) |
+| `20261023000002_create_newsletter.sql` | `newsletter` | Secção Newsletter (publishable key, só insert) |
+| `20261023000003_create_feedback.sql` | `feedback` | Página `/feedback` (publishable key, só insert) |
+
+**Base de dados nova**: correr os três ficheiros por ordem no SQL Editor
+do Supabase, ou, com a Supabase CLI ligada ao projeto, `supabase db push`.
+
+Todas as tabelas têm RLS ligado. `payments` não tem nenhuma policy: só a
+`SUPABASE_SERVICE_ROLE_KEY` lhe acede, porque guarda dados pessoais e de
+saúde (alergias) dos clientes.
+
+**Alterações futuras ao esquema**: criar um ficheiro novo em
+`supabase/migrations/` (ex: `20261101000001_add_x_to_payments.sql`) em vez
+de editar os existentes.
 
 ## Dívida técnica conhecida (por resolver)
 
-1. **Dashboard de admin ainda lê `payments` com a publishable key.**
-   O webhook da Stripe já usa `SUPABASE_SERVICE_ROLE_KEY` server-only
-   para gravar/atualizar compras, mas o dashboard de admin continua a ler
-   com `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` e proteção por password em
-   `/admin`. Em maior escala, vale a pena migrar também o dashboard para
-   leitura server-only com políticas mais restritas.
-
-2. **Não existem Termos de Serviço.** Só a Política de Privacidade foi
+1. **Não existem Termos de Serviço.** Só a Política de Privacidade foi
    criada (`app/privacy-policy/page.tsx`). Termos de Serviço (política de
    reembolso, regras de conduta no evento, idade mínima, etc.) continuam
    por escrever.
 
-3. **Só existe 1 plano em `data/plans.ts`.** Se adicionarem mais planos
+2. **Só existe 1 plano em `data/plans.ts`.** Se adicionarem mais planos
    no futuro, `createCheckoutSession` (`app/actions/checkout.ts`) precisa
    de passar a receber qual plano foi escolhido — hoje usa sempre
    `eventsPlans[0]`, ignorando os restantes.
 
-4. **Autenticação de `/admin` é password única, sem rate limiting.** Não
+3. **Autenticação de `/admin` é password única, sem rate limiting.** Não
    há proteção contra tentativas repetidas de login (brute force). Baixo
    risco enquanto for só uso interno, mas vale a pena rever se o link
    circular mais.

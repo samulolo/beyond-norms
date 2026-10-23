@@ -8,6 +8,10 @@ import {
   instagramHandle,
   instagramUrl,
   organizerName,
+  publicSiteUrl,
+  shareMessage,
+  upcomingEventsQrPath,
+  upcomingEventsUrl,
 } from "@/utils/constant/const";
 
 const colors = {
@@ -103,7 +107,17 @@ function GoldLine() {
   );
 }
 
-export default function ThankYouEmailTemplate() {
+type ThankYouEmailTemplateProps = {
+  /**
+   * Origem da imagem do QR. No envio usa-se um anexo inline (cid:...);
+   * por omissão aponta para a imagem pública no site.
+   */
+  qrSrc?: string;
+};
+
+export default function ThankYouEmailTemplate({
+  qrSrc = `${publicSiteUrl}${upcomingEventsQrPath}`,
+}: ThankYouEmailTemplateProps = {}) {
   return (
     <table
       role="presentation"
@@ -349,6 +363,181 @@ export default function ThankYouEmailTemplate() {
                     <Highlight>
                       Because meaningful connections deserve to be shared.
                     </Highlight>
+
+                    {/* QR code — próximos eventos, para partilhar */}
+                    <table
+                      role="presentation"
+                      width="100%"
+                      cellPadding={0}
+                      cellSpacing={0}
+                      style={{
+                        border: `1px solid ${colors.goldLight}`,
+                        margin: "0 0 32px",
+                      }}
+                    >
+                      <tbody>
+                        <tr>
+                          <td
+                            align="center"
+                            style={{
+                              backgroundColor: colors.dark,
+                              padding: "28px 24px 24px",
+                              textAlign: "center",
+                            }}
+                          >
+                            <p
+                              style={{
+                                fontFamily: fontSans,
+                                fontSize: "11px",
+                                fontWeight: 700,
+                                letterSpacing: "1.5px",
+                                textTransform: "uppercase",
+                                color: colors.goldLight,
+                                margin: "0 0 8px",
+                              }}
+                            >
+                              The next chapter
+                            </p>
+                            <h2
+                              style={{
+                                fontFamily: fontSerif,
+                                fontSize: "22px",
+                                lineHeight: "1.4",
+                                fontWeight: 400,
+                                color: colors.white,
+                                margin: "0 auto 20px",
+                                maxWidth: "420px",
+                              }}
+                            >
+                              We don&apos;t create events. We create moments
+                              that bring people closer.
+                            </h2>
+                            <table
+                              role="presentation"
+                              cellPadding={0}
+                              cellSpacing={0}
+                              style={{ margin: "0 auto" }}
+                            >
+                              <tbody>
+                                <tr>
+                                  <td
+                                    style={{
+                                      backgroundColor: colors.white,
+                                      padding: "12px",
+                                      border: `1px solid ${colors.gold}`,
+                                    }}
+                                  >
+                                    <a href={upcomingEventsUrl}>
+                                      <img
+                                        src={qrSrc}
+                                        width={168}
+                                        height={168}
+                                        alt="QR code to the Beyond Norms upcoming events page"
+                                        style={{
+                                          display: "block",
+                                          width: "168px",
+                                          height: "168px",
+                                          border: 0,
+                                        }}
+                                      />
+                                    </a>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                            <p
+                              style={{
+                                fontFamily: fontSans,
+                                fontSize: "13px",
+                                lineHeight: "1.6",
+                                color: colors.white,
+                                margin: "16px 0 0",
+                              }}
+                            >
+                              Scan the code or visit{" "}
+                              <a
+                                href={upcomingEventsUrl}
+                                style={{
+                                  color: colors.goldLight,
+                                  textDecoration: "underline",
+                                }}
+                              >
+                                lp.beyondnorms.net/upcoming-events
+                              </a>
+                            </p>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td
+                            align="center"
+                            style={{ padding: "20px 24px", textAlign: "center" }}
+                          >
+                            <p
+                              style={{
+                                fontFamily: fontSans,
+                                fontSize: "11px",
+                                fontWeight: 700,
+                                letterSpacing: "1px",
+                                textTransform: "uppercase",
+                                color: colors.goldMuted,
+                                margin: "0 0 12px",
+                              }}
+                            >
+                              Share it with someone special
+                            </p>
+                            <table
+                              role="presentation"
+                              cellPadding={0}
+                              cellSpacing={0}
+                              style={{ margin: "0 auto" }}
+                            >
+                              <tbody>
+                                <tr>
+                                  <td style={{ padding: "0 6px" }}>
+                                    <a
+                                      href={`https://wa.me/?text=${encodeURIComponent(`${shareMessage} ${upcomingEventsUrl}`)}`}
+                                      style={{
+                                        display: "inline-block",
+                                        backgroundColor: colors.dark,
+                                        color: colors.white,
+                                        fontFamily: fontSans,
+                                        fontSize: "12px",
+                                        fontWeight: 600,
+                                        letterSpacing: "1px",
+                                        textTransform: "uppercase",
+                                        textDecoration: "none",
+                                        padding: "12px 20px",
+                                      }}
+                                    >
+                                      WhatsApp
+                                    </a>
+                                  </td>
+                                  <td style={{ padding: "0 6px" }}>
+                                    <a
+                                      href={`mailto:?subject=${encodeURIComponent("You're invited to Beyond Norms")}&body=${encodeURIComponent(`${shareMessage}\n\n${upcomingEventsUrl}`)}`}
+                                      style={{
+                                        display: "inline-block",
+                                        border: `1px solid ${colors.dark}`,
+                                        color: colors.dark,
+                                        fontFamily: fontSans,
+                                        fontSize: "12px",
+                                        fontWeight: 600,
+                                        letterSpacing: "1px",
+                                        textTransform: "uppercase",
+                                        textDecoration: "none",
+                                        padding: "11px 20px",
+                                      }}
+                                    >
+                                      Email
+                                    </a>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
 
                     <P>
                       From the bottom of my heart, thank you for believing in

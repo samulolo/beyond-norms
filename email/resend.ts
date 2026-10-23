@@ -2,7 +2,16 @@ import { Resend } from "resend";
 import  EmailTemplate  from "@/components/email-template";
 import { NewsletterEmailTemplate } from "@/components/newsletter-email-template";
 import SaleNotificationEmail from "@/components/sale-notification-email";
-import { saleNotificationEmail } from "@/utils/constant/const";
+import ThankYouEmailTemplate from "@/components/thank-you-email-template";
+import {
+  upcomingEventsQrBase64,
+  upcomingEventsQrContentId,
+} from "@/email/upcoming-events-qr";
+import FeedbackNotificationEmail from "@/components/feedback-notification-email";
+import {
+  feedbackNotificationEmail,
+  saleNotificationEmail,
+} from "@/utils/constant/const";
 
 
 let resend: Resend | null = null;
@@ -136,5 +145,90 @@ export const sendNewsletterConfirmation = async function(mailTo: string) {
   } catch (err) {
     console.log("ERRO NO ENVIO DE EMAIL DA NEWSLETTER: ", err);
     throw new Error("Houve um erro ao enviar email de confirmação da newsletter");
+  }
+};
+
+export const sendThankYouEmail = async function (
+  mailTo: string,
+  subject = "Thank you for being part of our first chapter",
+) {
+  if (!mailTo) {
+    throw new Error("O email do destinatário é obrigatório");
+  }
+
+  try {
+    const { emailFrom, resend } = getEmailConfig();
+
+    const { data, error } = await resend.emails.send({
+      from: emailFrom,
+      to: [mailTo],
+      subject,
+      react: ThankYouEmailTemplate({
+        qrSrc: `cid:${upcomingEventsQrContentId}`,
+      }),
+      attachments: [
+        {
+          filename: "beyond-norms-qr-code.png",
+          content: upcomingEventsQrBase64,
+          contentType: "image/png",
+          contentId: upcomingEventsQrContentId,
+        },
+      ],
+    });
+
+    if (error) {
+      console.log("Houve um erro ao enviar email de agradecimento: ", error);
+      throw new Error("A Resend recusou o envio do email de agradecimento");
+    }
+
+    console.log("Email de agradecimento enviado com sucesso: ", data);
+    return data;
+  } catch (err) {
+    console.log("ERRO NO ENVIO DO EMAIL DE AGRADECIMENTO: ", err);
+    throw new Error("Houve um erro ao enviar email de agradecimento");
+  }
+};
+
+interface FeedbackNotificationInput {
+  name: string;
+  email: string;
+  message: string;
+}
+
+// Aviso interno de "novo feedback" enviado sempre que alguém submete o
+// formulário em /feedback. O reply-to é o email da pessoa, para quem
+// recebe poder responder diretamente.
+export const sendFeedbackNotification = async function (
+  input: FeedbackNotificationInput,
+  // Por omissão vai para FEEDBACK_NOTIFICATION_EMAIL (o Nande). Só se passa
+  // outro destino em testes.
+  to: string = feedbackNotificationEmail,
+) {
+  try {
+    const { emailFrom, resend } = getEmailConfig();
+
+    const submittedAt = new Intl.DateTimeFormat("en-GB", {
+      dateStyle: "medium",
+      timeStyle: "short",
+      timeZone: "Europe/Lisbon",
+    }).format(new Date());
+
+    const { data, error } = await resend.emails.send({
+      from: emailFrom,
+      to: [to],
+      replyTo: input.email,
+      subject: `New feedback — ${input.name}`,
+      react: FeedbackNotificationEmail({ ...input, submittedAt }),
+    });
+
+    if (error) {
+      console.log("Houve um erro ao enviar aviso de feedback: ", error);
+      throw new Error("A Resend recusou o envio do aviso de feedback");
+    }
+
+    console.log("Aviso de feedback enviado com sucesso: ", data);
+  } catch (err) {
+    console.log("ERRO NO ENVIO DO AVISO DE FEEDBACK: ", err);
+    throw new Error("Houve um erro ao enviar aviso de feedback");
   }
 };

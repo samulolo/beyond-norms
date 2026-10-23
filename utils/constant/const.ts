@@ -12,7 +12,22 @@ export const contactEmail = process.env.NEXT_PUBLIC_EMAIL_CONTACT ?? "contact@be
 // Para onde vai o aviso interno de "nova compra recebida", enviado a par
 // do email de confirmação do cliente (ver app/api/stripe/webhook/route.ts).
 export const saleNotificationEmail =
-  process.env.SALE_NOTIFICATION_EMAIL ?? "nande.vahakeni@beyondnorms.net"
+  process.env.SALE_NOTIFICATION_EMAIL ?? "nande.vahekeni@beyondnorms.net"
+// Domínio público do site. Usado onde é preciso um URL absoluto que
+// funcione fora do site (emails, QR code, links de partilha) — não usar
+// NEXT_PUBLIC_SITE_URL aqui, porque em dev aponta para localhost.
+export const publicSiteUrl = "https://lp.beyondnorms.net"
+export const upcomingEventsUrl = `${publicSiteUrl}/upcoming-events`
+export const upcomingEventsQrPath = "/images/upcoming_event.png"
+export const shareMessage =
+  "Discover Beyond Norms — Soul Speed Dating & Dinner Show in Lisbon. See the upcoming events:"
+
+// Para onde vai o aviso interno de "novo feedback" (ver
+// app/actions/feedback.ts). Sem env própria, usa o mesmo destino dos
+// avisos de venda.
+export const feedbackNotificationEmail =
+  process.env.FEEDBACK_NOTIFICATION_EMAIL ?? saleNotificationEmail
+
 export const instagramHandle = "bn_beyondnorms"
 export const instagramUrl = `https://instagram.com/${instagramHandle}`
 

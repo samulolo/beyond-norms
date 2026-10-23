@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 
 import { logout } from "@/app/actions/admin";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/supabase/server";
+import { createAdminClient } from "@/supabase/admin";
 import { eventDates } from "@/utils/constant/const";
 
 export const metadata: Metadata = {
@@ -29,11 +30,19 @@ type Payment = {
 };
 
 async function getPayments(): Promise<Payment[]> {
-  const supabase = await createClient();
+  // Sem cookies()/headers(), o Next.js tentaria gerar esta página no build
+  // e congelar as vendas nesse momento. connection() obriga a correr a
+  // cada pedido, para o dashboard mostrar sempre os dados atuais.
+  await connection();
 
-  // .order("created_at") falha em silêncio (devolve tudo sem ordenar) se
-  // a coluna não existir — ver SQL em MAINTENANCE.md para garantir que
-  // existe antes de confiar na ordenação por data.
+  // Service role key (server-only): a tabela `payments` tem RLS sem
+  // policies, por isso a publishable key não consegue ler. É seguro aqui
+  // porque esta página corre só no servidor e está protegida pela
+  // ADMIN_PASSWORD (middleware.ts).
+  const supabase = createAdminClient();
+
+  // A coluna created_at é criada pela migration
+  // supabase/migrations/20261023000001_create_payments.sql.
   const { data, error } = await supabase
     .from("payments")
     .select("*")
