@@ -1,7 +1,7 @@
 
 
 
-export const eventYear : number = 2026
+export const eventYear : number = new Date().getFullYear()
 
 export const organizerName = "BeyondNorms"
 export const eventAddress = "Rua dos Lusíadas, nº 4 A, 1300-370 Lisboa, Portugal"

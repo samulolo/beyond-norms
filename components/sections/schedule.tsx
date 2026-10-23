@@ -4,7 +4,7 @@ import type { StaticImageData } from "next/image";
 import { Reveal } from "@/components/ui/reveal";
 import { dinnerShowTime, soulSpeedDatingTime } from "@/utils/constant/const";
 import soulSpeedDating from "@/public/images/soul-speed-dating.jpg";
-import dinnerShowPerformance from "@/public/images/dinner-show-live-band.png";
+import dinnerShowPerformance from "@/public/images/dinner-show-live-band.jpg";
 
 type ScheduleItem = {
   time: string;

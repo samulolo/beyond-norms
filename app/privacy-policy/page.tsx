@@ -33,7 +33,7 @@ export default function PrivacyPolicyPage() {
             Privacy Policy
           </h1>
           <p className="font-sans text-xs uppercase tracking-widest text-neutral">
-            Last updated: July 2026
+            Last updated: October 2026
           </p>
         </div>
 
@@ -64,7 +64,7 @@ export default function PrivacyPolicyPage() {
               back to us to send your confirmation.
             </li>
             <li className="list-disc">
-              The experience date you choose (20 August or 21 September 2026).
+              The experience date you choose.
             </li>
             <li className="list-disc">
               Dietary restrictions and, if you choose to share them,

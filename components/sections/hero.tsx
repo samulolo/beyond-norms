@@ -9,13 +9,13 @@ import { Reveal } from "@/components/ui/reveal";
 import { ReserveSeatButton } from "@/components/ui/reserve-seat-button";
 import { SeatsAvailable } from "@/components/ui/seats-available";
 import { VideoModal } from "@/components/ui/video-modal";
-import { eventDates, eventYear } from "@/utils/constant/const";
 import heroDinner from "@/public/images/hero-dinner.jpg";
 
 const navLinks = [
   { label: "Why Beyond", href: "#why-beyond" },
   { label: "Experience", href: "#experience" },
   { label: "Schedule", href: "#schedule" },
+  { label: "Upcoming Events", href: "/upcoming-events" },
   { label: "Contact", href: "#contact" },
 ];
 
@@ -62,7 +62,12 @@ function PlayIcon() {
   );
 }
 
-export function Hero() {
+type HeroProps = {
+  /** Data do próximo evento já anunciado; sem ela mostra "Coming soon". */
+  nextEventLabel?: string;
+};
+
+export function Hero({ nextEventLabel }: HeroProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isVideoOpen, setIsVideoOpen] = useState(false);
 
@@ -153,35 +158,34 @@ export function Hero() {
 
         <div className="flex flex-1 flex-col justify-center px-8 py-10 sm:py-14 lg:px-16 lg:py-10">
           <div className="max-w-3xl text-left">
-            <Reveal>
+            <Reveal trigger="load">
               <p className="font-sans text-xs font-semibold uppercase tracking-[0.28em] text-secondary sm:text-sm">
-                Lisbon &middot;{" "}
-                {eventDates.map((date) => date.label).join(" & ")},{" "}
-                {eventYear}
+                Lisbon &middot; Next event:{" "}
+                {nextEventLabel ?? "Coming soon"}
               </p>
             </Reveal>
 
-            <Reveal delay={100}>
+            <Reveal trigger="load" delay={100}>
               <h1 className="mt-4 max-w-3xl font-serif text-5xl leading-[1.06] text-primary sm:text-6xl lg:text-7xl">
                 Luxury Soul Speed Dating &amp; Dinner Show{" "}
                 <span className="block text-secondary">Experience</span>
               </h1>
             </Reveal>
 
-            <Reveal delay={200}>
+            <Reveal trigger="load" delay={200}>
               <p className="mt-4 font-serif text-2xl leading-tight text-primary sm:text-3xl">
                 Create. Connect. Celebrate.
               </p>
             </Reveal>
 
-            <Reveal delay={300}>
+            <Reveal trigger="load" delay={300}>
               <p className="mt-5 max-w-md font-sans text-base leading-relaxed text-primary/85 sm:text-lg">
                 Meet inspiring people through guided conversations before
                 enjoying an intimate dinner show with live surprise artists.
               </p>
             </Reveal>
 
-            <Reveal delay={400}>
+            <Reveal trigger="load" delay={400}>
               <div className="mt-8 flex flex-col items-start gap-5">
                 <div className="grid w-full max-w-3xl gap-3 sm:grid-cols-2 lg:flex lg:flex-wrap lg:items-center lg:gap-4">
                   <ReserveSeatButton className="w-full lg:w-auto" />

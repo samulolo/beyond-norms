@@ -8,7 +8,14 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function CheckoutPage() {
+export default async function CheckoutPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const { date } = await searchParams;
+  const initialDate = typeof date === "string" ? date : undefined;
+
   return (
     <section className="flex flex-1 flex-col items-center bg-tertiary px-8 py-24 lg:px-16">
       <div className="w-full max-w-lg">
@@ -31,7 +38,7 @@ export default function CheckoutPage() {
         </div>
 
 
-        <CheckoutForm />
+        <CheckoutForm initialDate={initialDate} />
       </div>
     </section>
   );

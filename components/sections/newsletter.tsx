@@ -46,7 +46,7 @@ export function Newsletter() {
   });
 
   return (
-    <section className="px-8 py-24 lg:px-16">
+    <section id="newsletter" className="px-8 py-24 lg:px-16">
       <Reveal className="mx-auto flex max-w-4xl flex-col gap-8 border border-secondary/50 bg-primary/5 p-8 text-left shadow-[0_24px_80px_rgba(0,0,0,0.2)] sm:p-10 lg:grid lg:grid-cols-[1fr_0.9fr] lg:items-center lg:gap-12">
         <div>
           <p className="font-sans text-sm font-semibold uppercase tracking-[0.3em] text-secondary">

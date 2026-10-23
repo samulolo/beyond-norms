@@ -13,20 +13,27 @@ import {
   countryCodes,
   defaultCountryCodeId,
 } from "@/utils/constant/country-codes";
+import { isPastEventDate } from "@/utils/event-dates";
 
-function isPastEventDate(id: string) {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return new Date(id).getTime() < today.getTime();
-}
+function getDefaultEventDateId(initialDate?: string) {
+  // Vindo de /upcoming-events?date=..., pré-seleciona essa data se for
+  // válida e ainda não tiver passado.
+  if (
+    initialDate &&
+    eventDates.some((date) => date.id === initialDate) &&
+    !isPastEventDate(initialDate)
+  ) {
+    return initialDate;
+  }
 
-function getDefaultEventDateId() {
   const upcoming = eventDates.find((date) => !isPastEventDate(date.id));
   return (upcoming ?? eventDates[eventDates.length - 1]).id;
 }
 
-export function CheckoutForm() {
-  const [selectedDate, setSelectedDate] = useState(getDefaultEventDateId);
+export function CheckoutForm({ initialDate }: { initialDate?: string }) {
+  const [selectedDate, setSelectedDate] = useState(() =>
+    getDefaultEventDateId(initialDate),
+  );
   const [hasAllergies, setHasAllergies] = useState<"yes" | "no" | null>(null);
   const [showPastDateError, setShowPastDateError] = useState(false);
 

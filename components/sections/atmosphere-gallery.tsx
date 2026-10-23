@@ -2,11 +2,11 @@ import Image from "next/image";
 import type { StaticImageData } from "next/image";
 
 import { Reveal } from "@/components/ui/reveal";
-import champagneGathering from "@/public/images/atmosphere-champagne-gathering.png";
-import conversationCards from "@/public/images/atmosphere-conversation-cards.png";
-import dinnerTable from "@/public/images/atmosphere-dinner-table.png";
-import livePerformance from "@/public/images/atmosphere-live-performance.png";
-import rooftopCommunity from "@/public/images/atmosphere-rooftop-community.png";
+import champagneGathering from "@/public/images/atmosphere-champagne-gathering.jpg";
+import conversationCards from "@/public/images/atmosphere-conversation-cards.jpg";
+import dinnerTable from "@/public/images/atmosphere-dinner-table.jpg";
+import livePerformance from "@/public/images/atmosphere-live-performance.jpg";
+import rooftopCommunity from "@/public/images/atmosphere-rooftop-community.jpg";
 
 type GalleryImage = {
   title: string;

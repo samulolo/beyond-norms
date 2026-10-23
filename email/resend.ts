@@ -54,7 +54,7 @@ export const sendEmailConfirmation = async function(
     console.log("Email enviado com sucesso: ", data)
 
     } catch(err){
-        console.log("ERRO NO ENVIO DE EMAIUL: ", err)
+        console.log("ERRO NO ENVIO DE EMAIL: ", err)
         throw new Error("Houve um erro ao enviar email de confirmação: ")
     }
 

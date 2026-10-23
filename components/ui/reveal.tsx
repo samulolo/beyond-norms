@@ -1,49 +1,30 @@
-"use client";
-
-import { useEffect, useRef, useState } from "react";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 type RevealProps = {
   children: ReactNode;
   className?: string;
   delay?: number;
+  /**
+   * "scroll" (default): anima quando entra no ecrã, via CSS scroll-driven
+   * animations. Browsers sem suporte mostram o conteúdo logo, sem animação.
+   * "load": anima uma vez no carregamento (usar acima da dobra, ex: hero).
+   */
+  trigger?: "scroll" | "load";
 };
 
-export function Reveal({ children, className = "", delay = 0 }: RevealProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(
-    () =>
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-  );
-
-  useEffect(() => {
-    if (isVisible) return;
-
-    const node = ref.current;
-    if (!node) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.15 },
-    );
-
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [isVisible]);
-
+// Sem JavaScript: o conteúdo vem visível no HTML do servidor e a animação é
+// só CSS. Antes, tudo começava com opacity-0 e só aparecia depois da
+// hidratação do React + IntersectionObserver, o que atrasava o primeiro ecrã.
+export function Reveal({
+  children,
+  className = "",
+  delay = 0,
+  trigger = "scroll",
+}: RevealProps) {
   return (
     <div
-      ref={ref}
-      style={{ transitionDelay: `${delay}ms` }}
-      className={`transition-all duration-700 ease-out ${
-        isVisible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
-      } ${className}`}
+      style={{ "--reveal-delay": `${delay}ms` } as CSSProperties}
+      className={`${trigger === "load" ? "reveal-load" : "reveal-scroll"} ${className}`}
     >
       {children}
     </div>

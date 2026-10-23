@@ -90,9 +90,9 @@ function HorizontalRule() {
 export default function EmailTemplate({
   emailTo,
   customerName = "there",
-  orderId = "12345",
-  eventDate = "Oct 15",
-  eventYear = "2026",
+  orderId,
+  eventDate,
+  eventYear,
   ticketPrice = eventsPlans[0]?.price ?? "85.00",
 }: EmailTemplateProps) {
   return (
@@ -237,6 +237,7 @@ export default function EmailTemplate({
                             >
                               Full Evening Access
                             </h2>
+                            {orderId && (
                             <p
                               style={{
                                 fontFamily: fontSans,
@@ -250,6 +251,7 @@ export default function EmailTemplate({
                             >
                               Confirmation #{orderId}
                             </p>
+                            )}
                           </td>
                         </tr>
 
@@ -272,10 +274,16 @@ export default function EmailTemplate({
                                   label="Location"
                                   value="Rooftop Ferroviário, Lisbon"
                                 />
-                                <DetailRow
-                                  label="Date"
-                                  value={`${eventDate}, ${eventYear}`}
-                                />
+                                {eventDate && (
+                                  <DetailRow
+                                    label="Date"
+                                    value={
+                                      eventYear
+                                        ? `${eventDate}, ${eventYear}`
+                                        : eventDate
+                                    }
+                                  />
+                                )}
                                 <DetailRow
                                   label="Soul Speed Dating"
                                   value={soulSpeedDatingTime}
