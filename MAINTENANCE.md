@@ -79,6 +79,7 @@ Ver secção própria mais abaixo.
 | `SALE_NOTIFICATION_EMAIL` | Para onde vai o aviso interno de "nova compra recebida" (ver `utils/constant/const.ts`). Sem esta env, usa `nande.vahekeni@beyondnorms.net` por omissão. |
 | `FEEDBACK_NOTIFICATION_EMAIL` | Para onde vai o aviso interno de "novo feedback" enviado a cada submissão em `/feedback`. Sem esta env, usa o mesmo destino de `SALE_NOTIFICATION_EMAIL`. |
 | `ADMIN_PASSWORD` | Password única para entrar em `/admin`. Sem esta env definida, `/admin` fica sempre inacessível (por segurança, não abre por omissão). |
+| `CRON_SECRET` | Segredo do Vercel Cron (string aleatória, 16+ caracteres). A Vercel envia-o no header `Authorization` ao chamar `/api/cron/keep-alive`; sem ele a rota responde sempre 401. |
 
 ## Dashboard de admin (`/admin`)
 
@@ -140,6 +141,21 @@ saúde (alergias) dos clientes.
 **Alterações futuras ao esquema**: criar um ficheiro novo em
 `supabase/migrations/` (ex: `20261101000001_add_x_to_payments.sql`) em vez
 de editar os existentes.
+
+## Keep-alive do Supabase (Vercel Cron)
+
+O plano gratuito do Supabase pausa projetos sem atividade durante 7
+dias. `vercel.json` agenda uma chamada diária a `/api/cron/keep-alive`
+(`app/api/cron/keep-alive/route.ts`), que faz uma consulta mínima de
+leitura à tabela `payments`.
+
+- Horário: `0 4 * * *` em **UTC** — 4h em Lisboa no inverno, 5h no
+  verão. No plano Hobby a Vercel pode disparar a qualquer minuto dessa
+  hora.
+- Segurança: precisa da env `CRON_SECRET` na Vercel.
+- Ver execuções: Vercel → projeto → Settings → Cron Jobs → View Logs.
+- A Vercel não repete uma execução falhada; um dia falhado não é
+  problema (a pausa só acontece ao fim de 7 dias).
 
 ## Dívida técnica conhecida (por resolver)
 
